@@ -91,7 +91,8 @@ module.exports = class WelcomeMessageCommand extends Command {
             message.member.user.displayAvatarURL()
           );
 
-        return message.say(embed);
+        message.channel.send(embed);
+        return;
       } else {
         // Report Back settings from DB
         const embed = new MessageEmbed()
@@ -123,13 +124,14 @@ module.exports = class WelcomeMessageCommand extends Command {
           embed.attachFiles(attachment);
           embed.setImage('attachment://wallpaper.jpg');
         } else embed.setImage(DBInfo.wallpaperURL);
-        return message.say(embed);
+        message.channel.send(embed);
+        return;
       }
     }
 
     // Report Settings are Disabled
     if (choice.toLowerCase() == 'no')
-      message.say(
+      message.reply(
         `Welcome Message ***Disabled*** on ${message.member.guild.name}`
       );
   }

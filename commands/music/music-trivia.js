@@ -34,10 +34,10 @@ module.exports = class MusicTriviaCommand extends Command {
   async run(message, { numberOfSongs }) {
     // check if user is in a voice channel
     var voiceChannel = message.member.voice.channel;
-    if (!voiceChannel)
-      return message.say(
-        ':no_entry: Please join a voice channel and try again!'
-      );
+    if (!voiceChannel) {
+      message.reply(':no_entry: Please join a voice channel and try again!');
+      return;
+    }
     if (message.guild.musicData.isPlaying === true)
       return message.channel.send(':x: A quiz or a song is already running!');
     message.guild.musicData.isPlaying = true;
@@ -61,7 +61,7 @@ module.exports = class MusicTriviaCommand extends Command {
         `:notes: Get ready! There are ${numberOfSongs} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
         You can end the trivia at any point by using the ${prefix}end-trivia command!`
       );
-    message.say(infoEmbed);
+    message.channel.send(infoEmbed);
     // init quiz queue
     // turn each vid to song object
 
@@ -103,7 +103,7 @@ module.exports = class MusicTriviaCommand extends Command {
           }
         )
         .on('error', async function(e) {
-          message.say(':x: Could not play that song!');
+          message.reply(':x: Could not play that song!');
           console.log(e);
           if (queue.length > 1) {
             queue.shift();

@@ -132,10 +132,10 @@ module.exports = class WelcomeSettingsCommand extends Command {
         bottomImageText ||
         wallpaperURL) == 's' &&
       !DBInfo
-    )
-      return message.reply(
-        ':x: No saved values were found: Cannot use "s" this time'
-      );
+    ) {
+      message.reply(':x: No saved values were found: Cannot use "s" this time');
+      return;
+    }
 
     if (destination == 's') destination = DBInfo.destination;
     if (destination != `direct message`) {
@@ -213,6 +213,7 @@ module.exports = class WelcomeSettingsCommand extends Command {
     }
     //Show URL Image
     else embed.setImage(wallpaperURL);
-    return message.say(embed);
+    message.channel.send(embed);
+    return;
   }
 };

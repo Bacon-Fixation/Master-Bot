@@ -51,7 +51,7 @@ module.exports = class RedditCommand extends Command {
 
   async run(message, { subreddit, sort }) {
     if (sort === 'top' || sort === 'controversial') {
-      await message.say(
+      await message.channel.send(
         `:loud_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`
       );
       try {
@@ -72,9 +72,8 @@ module.exports = class RedditCommand extends Command {
         var timeFilter = t.first().content;
       } catch (e) {
         console.error(e);
-        return message.say(
-          ':x: Please try again and enter a proper time filter!'
-        );
+        message.reply(':x: Please try again and enter a proper time filter!');
+        return;
       }
     }
     const response = await fetch(
