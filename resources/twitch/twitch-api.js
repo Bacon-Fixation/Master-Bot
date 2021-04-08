@@ -1,8 +1,9 @@
+require('dotenv').config();
 const fetch = require('node-fetch');
-const { twitchClientID, twitchClientSecret } = require('../../config.json');
+//const { twitchClientID, twitchClientSecret } = require('../../config.json');
 
 // Skips loading if not found in config.json
-if (!twitchClientID || !twitchClientSecret) return;
+if (!process.env.twitchClientSecret || !process.env.twitchClientSecret) return;
 
 module.exports = class TwitchAPI {
   //Access Token is valid for 24 Hours

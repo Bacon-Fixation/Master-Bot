@@ -1,5 +1,6 @@
+require('dotenv').config();
 const { Command } = require('discord.js-commando');
-const { prefix } = require('../../config.json');
+//const { process.env.prefix } = require('../../config.json');
 
 module.exports = class SkipCommand extends Command {
   constructor(client) {
@@ -32,7 +33,9 @@ module.exports = class SkipCommand extends Command {
       );
       return;
     } else if (message.guild.triviaData.isTriviaRunning) {
-      message.reply(`You can't skip a trivia! Use ${prefix}end-trivia`);
+      message.reply(
+        `You can't skip a trivia! Use ${process.env.prefix}end-trivia`
+      );
       return;
     }
     message.guild.musicData.loopSong = false;

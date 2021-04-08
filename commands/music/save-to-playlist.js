@@ -1,8 +1,9 @@
+require('dotenv').config();
 const { Command } = require('discord.js-commando');
 const db = require('quick.db');
 const Youtube = require('simple-youtube-api');
-const { youtubeAPI } = require('../../config.json');
-const youtube = new Youtube(youtubeAPI);
+//const { process.env.youtubeAPI } = require('../../config.json');
+const youtube = new Youtube(process.env.youtubeAPI);
 
 module.exports = class SaveToPlaylistCommand extends Command {
   constructor(client) {

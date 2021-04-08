@@ -1,9 +1,10 @@
+require('dotenv').config();
 const fetch = require('node-fetch');
-const { tenorAPI } = require('../../config.json');
+//const { process.env.tenorAPI } = require('../../config.json');
 const { Command } = require('discord.js-commando');
 
 // Skips loading if not found in config.json
-if (!tenorAPI) return;
+if (!process.env.tenorAPI) return;
 
 module.exports = class DogCommand extends Command {
   constructor(client) {
@@ -21,7 +22,9 @@ module.exports = class DogCommand extends Command {
   }
 
   run(message) {
-    fetch(`https://api.tenor.com/v1/random?key=${tenorAPI}&q=dog&limit=1`)
+    fetch(
+      `https://api.tenor.com/v1/random?key=${process.env.tenorAPI}&q=dog&limit=1`
+    )
       .then(res => res.json())
       .then(json => message.channel.send(json.results[0].url))
       .catch(err => {

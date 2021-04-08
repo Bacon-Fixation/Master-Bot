@@ -1,15 +1,16 @@
+require('dotenv').config();
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const db = require('quick.db');
 const TwitchAPI = require('../../resources/twitch/twitch-api.js');
-const {
-  twitchClientID,
-  twitchClientSecret,
-  prefix
-} = require('../../config.json');
+// const {
+//   process.env.twitchClientID,
+//   process.env.twitchClientSecret,
+//   process.env.prefix
+// } = require('../../config.json');
 
 // Skips loading if not found in config.json
-if (!twitchClientID || !twitchClientSecret) return;
+if (!process.env.twitchClientID || !process.env.twitchClientSecret) return;
 
 module.exports = class TwitchAnnouncerSettingsCommand extends Command {
   constructor(client) {
@@ -31,16 +32,18 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       examples: [
         '(Basic Setup)',
         '`' +
-          `${prefix}twitch-announcer-settings streamer-name  text-channel-name` +
+          `${process.env.prefix}twitch-announcer-settings streamer-name  text-channel-name` +
           '`',
         '(Optional Timer)',
-        '`' + `${prefix}tasettings bacon-fixation general 3` + '`',
+        '`' + `${process.env.prefix}tasettings bacon-fixation general 3` + '`',
         `(Optional Message)`,
         '`' +
-          `${prefix}tasettings bacon-fixation general 2 "Check out my stream"` +
+          `${process.env.prefix}tasettings bacon-fixation general 2 "Check out my stream"` +
           '`',
         '(Optional No Message)',
-        '`' + `${prefix}tasettings bacon-fixation <channel-name> 2 none` + '`'
+        '`' +
+          `${process.env.prefix}tasettings bacon-fixation <channel-name> 2 none` +
+          '`'
       ],
       description: 'Settings for the Twitch Announcer.',
       args: [
@@ -108,8 +111,8 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     let access_token;
     try {
       access_token = await TwitchAPI.getToken(
-        twitchClientID,
-        twitchClientSecret,
+        process.env.twitchClientID,
+        process.env.twitchClientSecret,
         scope
       );
     } catch (e) {
@@ -120,7 +123,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     try {
       var user = await TwitchAPI.getUserInfo(
         access_token,
-        twitchClientID,
+        process.env.twitchClientID,
         textFiltered
       );
     } catch (e) {
@@ -151,7 +154,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       .setTitle(`Your settings were saved!`)
       .setDescription(
         'Remember to run `' +
-          `${prefix}twitch-announcer enable` +
+          `${process.env.prefix}twitch-announcer enable` +
           '` to start your timer.'
       )
       .setColor('#6441A4')

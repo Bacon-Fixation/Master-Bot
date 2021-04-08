@@ -1,7 +1,8 @@
+require('dotenv').config();
 const { CommandoClient } = require('discord.js-commando');
 const { Structures, MessageEmbed, MessageAttachment } = require('discord.js');
 const path = require('path');
-const { prefix, token, discord_owner_id } = require('./config.json');
+//const { process.env.prefix, process.env.token, process.env.discord_owner_id } = require('./config.json');
 const db = require('quick.db');
 const Canvas = require('canvas');
 
@@ -39,8 +40,8 @@ Structures.extend('Guild', function(Guild) {
 });
 
 const client = new CommandoClient({
-  commandPrefix: prefix,
-  owner: discord_owner_id
+  commandPrefix: process.env.prefix,
+  owner: process.env.discord_owner_id
 });
 
 client.registry
@@ -62,7 +63,7 @@ client.registry
 
 client.once('ready', () => {
   console.log(`${client.user.tag} is Ready!`);
-  client.user.setActivity(`${prefix}help`, {
+  client.user.setActivity(`${process.env.prefix}help`, {
     type: 'WATCHING',
     url: 'https://github.com/galnir/Master-Bot'
   });
@@ -248,4 +249,4 @@ client.on('guildMemberAdd', async member => {
   }
 });
 
-client.login(token);
+client.login(process.env.token);

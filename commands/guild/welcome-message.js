@@ -1,7 +1,8 @@
+require('dotenv').config();
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const db = require('quick.db');
-const { prefix } = require('../../config.json');
+//const { process.env.prefix } = require('../../config.json');
 
 module.exports = class WelcomeMessageCommand extends Command {
   constructor(client) {
@@ -73,7 +74,7 @@ module.exports = class WelcomeMessageCommand extends Command {
           )
           .setDescription(
             'You can run the `' +
-              `${prefix}show-welcome-message` +
+              `${process.env.prefix}show-welcome-message` +
               '` command to see what it will look like!'
           )
           .addField('Message Destination', 'direct message')
@@ -101,7 +102,7 @@ module.exports = class WelcomeMessageCommand extends Command {
           )
           .setDescription(
             'You can run the `' +
-              `${prefix}show-welcome-message` +
+              `${process.env.prefix}show-welcome-message` +
               '` command to see what it will look like!'
           )
           .addField('Command Used For Settings', '`' + DBInfo.cmdUsed + '`')

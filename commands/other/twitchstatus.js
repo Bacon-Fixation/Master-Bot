@@ -1,12 +1,13 @@
+require('dotenv').config();
 const { Command } = require('discord.js-commando');
 const TwitchAPI = require('../../resources/twitch/twitch-api.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
-const { twitchClientID, twitchClientSecret } = require('../../config.json');
+//const { process.env.twitchClientID, process.env.twitchClientSecret } = require('../../config.json');
 const Canvas = require('canvas');
 const probe = require('probe-image-size');
 
 // Skips loading if not found in config.json
-if (!twitchClientID || !twitchClientSecret) return;
+if (!process.env.twitchClientID || !process.env.twitchClientSecret) return;
 
 module.exports = class TwitchStatusCommand extends Command {
   constructor(client) {
@@ -39,8 +40,8 @@ module.exports = class TwitchStatusCommand extends Command {
 
     try {
       access_token = await TwitchAPI.getToken(
-        twitchClientID,
-        twitchClientSecret,
+        process.env.twitchClientID,
+        process.env.twitchClientSecret,
         scope
       );
     } catch (e) {
@@ -51,7 +52,7 @@ module.exports = class TwitchStatusCommand extends Command {
     try {
       var user = await TwitchAPI.getUserInfo(
         access_token,
-        twitchClientID,
+        process.env.twitchClientID,
         textFiltered
       );
     } catch (e) {
@@ -64,7 +65,7 @@ module.exports = class TwitchStatusCommand extends Command {
     try {
       var streamInfo = await TwitchAPI.getStream(
         access_token,
-        twitchClientID,
+        process.env.twitchClientID,
         user_id
       );
     } catch (e) {
@@ -112,7 +113,7 @@ module.exports = class TwitchStatusCommand extends Command {
     try {
       var gameInfo = await TwitchAPI.getGames(
         access_token,
-        twitchClientID,
+        process.env.twitchClientID,
         streamInfo.data[0].game_id
       );
       var result = await probe(

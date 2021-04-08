@@ -1,7 +1,8 @@
+require('dotenv').config();
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const db = require('quick.db');
-const { prefix } = require('../../config.json');
+//const { process.env.prefix } = require('../../config.json');
 
 module.exports = class WelcomeSettingsCommand extends Command {
   constructor(client) {
@@ -18,10 +19,10 @@ module.exports = class WelcomeSettingsCommand extends Command {
       userPermissions: ['ADMINISTRATOR'],
       clientPermissions: ['MANAGE_MESSAGES', 'ATTACH_FILES', 'SEND_MESSAGES'],
       examples: [
-        '```' + `${prefix}welcomesettings - to restore Defaults`,
-        `${prefix}welcomesettings "Channel-name" "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
-        `${prefix}welcomesettings "" "My Title" "Upper Text" "" "" 800 400`,
-        `${prefix}welcomesettings "s" "s" "s" "Upper Text" "My Wallpaper URL" "700" "250" - to only change the Main Text and Wallpaper settings` +
+        '```' + `${process.env.prefix}welcomesettings - to restore Defaults`,
+        `${process.env.prefix}welcomesettings "Channel-name" "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
+        `${process.env.prefix}welcomesettings "" "My Title" "Upper Text" "" "" 800 400`,
+        `${process.env.prefix}welcomesettings "s" "s" "s" "Upper Text" "My Wallpaper URL" "700" "250" - to only change the Main Text and Wallpaper settings` +
           '```'
       ],
       description:
@@ -188,7 +189,7 @@ module.exports = class WelcomeSettingsCommand extends Command {
       .setTitle(`:white_check_mark: Welcome Settings Were saved`)
       .setDescription(
         'You can run the `' +
-          `${prefix}show-welcome-message` +
+          `${process.env.prefix}show-welcome-message` +
           '` command to see what it will look like!'
       )
       .addField('Command Used For Settings', '`' + message.content + '`')

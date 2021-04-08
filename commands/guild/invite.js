@@ -1,17 +1,18 @@
+require('dotenv').config();
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
-const { invite } = require('../../config.json');
+//const { process.env.invite } = require('../../config.json');
 
-// Only if invite is in config.json and set to true
-if (!invite) return;
+// Only if process.env.invite is in config.json and set to true
+if (!process.env.invite) return;
 
 module.exports = class InviteCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'invite',
+      name: 'process.env.invite',
       group: 'guild',
-      memberName: 'invite',
-      description: 'Replies with a link to invite the bot.'
+      memberName: 'process.env.invite',
+      description: 'Replies with a link to process.env.invite the bot.'
     });
   }
 

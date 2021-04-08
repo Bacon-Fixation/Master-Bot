@@ -1,11 +1,13 @@
+require('dotenv').config();
 const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch');
-const { newsAPI } = require('../../config.json');
+
+//const { process.env.newsAPI } = require('../../config.json');
 const { Command } = require('discord.js-commando');
 const Pagination = require('discord-paginationembed');
 
 // Skips loading if not found in config.json
-if (!newsAPI) return;
+if (!process.env.newsAPI) return;
 
 module.exports = class GlobalNewsCommand extends Command {
   constructor(client) {
@@ -26,7 +28,7 @@ module.exports = class GlobalNewsCommand extends Command {
     // powered by NewsAPI.org
     try {
       const response = await fetch(
-        `https://newsapi.org/v2/top-headlines?sources=reuters&pageSize=10&apiKey=${newsAPI}`
+        `https://newsapi.org/v2/top-headlines?sources=reuters&pageSize=10&apiKey=${process.env.newsAPI}`
       );
       const json = await response.json();
       const articleArr = [];

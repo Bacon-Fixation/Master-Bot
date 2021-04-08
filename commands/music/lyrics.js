@@ -1,12 +1,13 @@
+require('dotenv').config();
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const Pagination = require('discord-paginationembed');
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
-const { geniusLyricsAPI } = require('../../config.json');
+//const { process.env.geniusLyricsAPI } = require('../../config.json');
 
 // Skips loading if not found in config.json
-if (!geniusLyricsAPI) return;
+if (!process.env.geniusLyricsAPI) return;
 
 module.exports = class LyricsCommand extends Command {
   constructor(client) {
@@ -102,7 +103,7 @@ module.exports = class LyricsCommand extends Command {
     return new Promise(async function(resolve, reject) {
       const searchURL = `https://api.genius.com/search?q=${encodeURI(query)}`;
       const headers = {
-        Authorization: `Bearer ${geniusLyricsAPI}`
+        Authorization: `Bearer ${process.env.geniusLyricsAPI}`
       };
       try {
         const body = await fetch(searchURL, { headers });
@@ -118,7 +119,7 @@ module.exports = class LyricsCommand extends Command {
   static getSongPageURL(url) {
     return new Promise(async function(resolve, reject) {
       const headers = {
-        Authorization: `Bearer ${geniusLyricsAPI}`
+        Authorization: `Bearer ${process.env.geniusLyricsAPI}`
       };
       try {
         const body = await fetch(url, { headers });

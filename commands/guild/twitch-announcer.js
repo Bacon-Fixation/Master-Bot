@@ -1,17 +1,18 @@
+require('dotenv').config();
 const { Command } = require('discord.js-commando');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const db = require('quick.db');
 const TwitchAPI = require('../../resources/twitch/twitch-api.js');
 const probe = require('probe-image-size');
 const Canvas = require('canvas');
-const {
-  twitchClientID,
-  twitchClientSecret,
-  prefix
-} = require('../../config.json');
+// const {
+//   process.env.twitchClientID,
+//   process.env.twitchClientSecret,
+//   process.env.prefix
+// } = require('../../config.json');
 
 // Skips loading if not found in config.json
-if (!twitchClientID || !twitchClientSecret) return;
+if (!process.env.twitchClientID || !process.env.twitchClientSecret) return;
 
 module.exports = class TwitchAnnouncerCommand extends Command {
   constructor(client) {
@@ -24,9 +25,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       userPermissions: ['ADMINISTRATOR'],
       clientPermissions: ['MANAGE_MESSAGES', 'MENTION_EVERYONE'],
       examples: [
-        '```' + `${prefix}twitch-announcer enable`,
-        `${prefix}twitch-announcer disable`,
-        `${prefix}ta check` + '```'
+        '```' + `${process.env.prefix}twitch-announcer enable`,
+        `${process.env.prefix}twitch-announcer disable`,
+        `${process.env.prefix}ta check` + '```'
       ],
       description:
         'Allows you to ***Enable***, ***Disable*** or ***Check*** the Twitch Announcer.',
@@ -56,7 +57,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     if (DBInfo == undefined) {
       message.reply(
         ':no_entry: No settings were found, please run `' +
-          `${prefix}twitch-announcer-settings` +
+          `${process.env.prefix}twitch-announcer-settings` +
           '` first'
       );
       return;
@@ -69,8 +70,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     let gameInfo;
     try {
       access_token = await TwitchAPI.getToken(
-        twitchClientID,
-        twitchClientSecret,
+        process.env.twitchClientID,
+        process.env.twitchClientSecret,
         scope
       );
     } catch (e) {
@@ -82,7 +83,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     try {
       var user = await TwitchAPI.getUserInfo(
         access_token,
-        twitchClientID,
+        process.env.twitchClientID,
         `${DBInfo.name}`
       );
     } catch (e) {
@@ -179,8 +180,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         );
         try {
           access_token = await TwitchAPI.getToken(
-            twitchClientID,
-            twitchClientSecret,
+            process.env.twitchClientID,
+            process.env.twitchClientSecret,
             scope
           );
         } catch (e) {
@@ -192,7 +193,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         try {
           user = await TwitchAPI.getUserInfo(
             access_token,
-            twitchClientID,
+            process.env.twitchClientID,
             `${DBInfo.name}`
           );
         } catch (e) {
@@ -205,7 +206,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         try {
           streamInfo = await TwitchAPI.getStream(
             access_token,
-            twitchClientID,
+            process.env.twitchClientID,
             user_id
           );
         } catch (e) {
@@ -234,7 +235,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           try {
             gameInfo = await TwitchAPI.getGames(
               access_token,
-              twitchClientID,
+              process.env.twitchClientID,
               streamInfo.data[0].game_id
             );
 

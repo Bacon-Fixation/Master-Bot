@@ -1,5 +1,5 @@
 // const fetch = require("node-fetch");
-// const { tenorAPI } = require("../config.json");
+// const { process.env.tenorAPI } = require("../config.json");
 const fs = require('fs');
 const { Command } = require('discord.js-commando');
 
@@ -35,11 +35,11 @@ module.exports = class GintamaCommand extends Command {
       2. Instead of waiting for the api we can just pick a random link from
       the gintamalinks file so the response is faster.
       You can still use the old method, it's commented out down below, and
-      don't forget to uncomment the require for node-fetch and tenorAPI above
+      don't forget to uncomment the require for node-fetch and process.env.tenorAPI above
     
       
        fetch(
-        `https://api.tenor.com/v1/random?key=${tenorAPI}&q=gintama&limit=1`
+        `https://api.tenor.com/v1/random?key=${process.env.tenorAPI}&q=gintama&limit=1`
       )
         .then(res => res.json())
         .then(json => message.channel.send(json.results[0].url))

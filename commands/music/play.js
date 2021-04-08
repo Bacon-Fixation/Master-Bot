@@ -1,8 +1,9 @@
+require('dotenv').config();
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const Youtube = require('simple-youtube-api');
 const ytdl = require('ytdl-core');
-const { youtubeAPI } = require('../../config.json');
+//const { process.env.youtubeAPI } = require('../../config.json');
 let {
   playLiveStreams,
   playVideosLongerThan1Hour,
@@ -12,7 +13,7 @@ let {
 const db = require('quick.db');
 const Pagination = require('discord-paginationembed');
 
-const youtube = new Youtube(youtubeAPI);
+const youtube = new Youtube(process.env.youtubeAPI);
 if (typeof playLiveStreams !== 'boolean') playLiveStreams = true;
 if (typeof maxQueueLength !== 'number' || maxQueueLength < 1) {
   maxQueueLength = 1000;

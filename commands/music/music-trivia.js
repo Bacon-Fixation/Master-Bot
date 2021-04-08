@@ -1,9 +1,10 @@
+require('dotenv').config();
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const ytdl = require('ytdl-core');
 const fs = require('fs');
 const db = require('quick.db');
-const { prefix } = require('../../config.json');
+//const { process.env.prefix } = require('../../config.json');
 
 module.exports = class MusicTriviaCommand extends Command {
   constructor(client) {
@@ -59,7 +60,7 @@ module.exports = class MusicTriviaCommand extends Command {
       .setTitle(':notes: Starting Music Quiz!')
       .setDescription(
         `:notes: Get ready! There are ${numberOfSongs} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
-        You can end the trivia at any point by using the ${prefix}end-trivia command!`
+        You can end the trivia at any point by using the ${process.env.prefix}end-trivia command!`
       );
     message.channel.send(infoEmbed);
     // init quiz queue
@@ -154,7 +155,7 @@ module.exports = class MusicTriviaCommand extends Command {
           collector.on('collect', msg => {
             if (!message.guild.triviaData.triviaScore.has(msg.author.username))
               return;
-            if (msg.content.startsWith(prefix)) return;
+            if (msg.content.startsWith(process.env.prefix)) return;
             // if user guessed song name
             if (msg.content.toLowerCase() === queue[0].title.toLowerCase()) {
               if (songNameFound) return; // if song name already found
