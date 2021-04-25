@@ -57,7 +57,7 @@ module.exports = class LyricsCommand extends Command {
         LyricsCommand.cleanSongName(songName)
       );
       const songPageURL = await LyricsCommand.getSongPageURL(url);
-      const lyrics = await LyricsCommand.getLyrics(songPageURL);
+      const lyrics = await LyricsCommand.getLyrics(songPageURL.trim());
 
       const lyricsIndex = Math.round(lyrics.length / 2048) + 1;
       const lyricsArray = [];
