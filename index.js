@@ -61,18 +61,40 @@ client.registry
   })
   .registerCommandsIn(path.join(__dirname, 'commands'));
 
+// DB tally 1 get
+const dbSettingsFetch = db.fetchAll();
+let dbBuffer = new Object();
+for (let i = 0; i < dbSettingsFetch.length; ++i)
+  dbBuffer[dbSettingsFetch[i].ID] = dbSettingsFetch[i].data;
+
 client.once('ready', () => {
   console.log(`${client.user.tag} is Ready!`);
   client.user.setActivity(`${prefix}help`, {
     type: 'WATCHING',
     url: 'https://github.com/galnir/Master-Bot'
   });
-  const Guilds = client.guilds.cache.map(guild => guild.name);
+  const Guilds = client.guilds.cache.map(guild => {
+    const disabledCommands = dbBuffer[guild.id].serverSettings.disabledCommands;
+    if (disabledCommands)
+      for (let i = 0; i < disabledCommands.length; ++i) {
+        if (guild.client.registry.commands.has(disabledCommands[i])) {
+          guild.setCommandEnabled(disabledCommands[i], false);
+          guild.setGroupEnabled(disabledCommands[i], false);
+        }
+      }
+    guild.commandPrefix = dbBuffer[guild.id].serverSettings.prefix
+      ? dbBuffer[guild.id].serverSettings.prefix
+      : prefix;
+    return guild.name;
+  });
+
   console.log(Guilds, 'Connected!');
   // Registering font For Cloud Services
   Canvas.registerFont('./resources/welcome/OpenSans-Light.ttf', {
     family: 'Open Sans Light'
   });
+  // Free up memory
+  dbBuffer = null;
 });
 client.on('voiceStateUpdate', async (___, newState) => {
   if (

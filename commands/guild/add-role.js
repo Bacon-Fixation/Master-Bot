@@ -1,11 +1,11 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 
-module.exports = class ARCommand extends Command {
+module.exports = class AddRoleCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'ar',
-      aliases: ['assign-role', 'ar', 'add-role'],
+      name: 'add-role',
+      aliases: ['assign-role', 'ar'],
       memberName: 'assign-role',
       group: 'guild',
       clientPermissions: ['MANAGE_ROLES'],
