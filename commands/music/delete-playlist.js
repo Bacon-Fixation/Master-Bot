@@ -23,12 +23,16 @@ module.exports = class DeletePlaylistCommand extends Command {
     // check if user has playlists or user is in the db
     const dbUserFetch = db.get(message.member.id);
     if (!dbUserFetch) {
-      message.reply('You have zero saved playlists!');
+      message.channel.send('You have zero saved playlists!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     const savedPlaylistsClone = dbUserFetch.savedPlaylists;
     if (savedPlaylistsClone.length == 0) {
-      message.reply('You have zero saved playlists!');
+      message.channel.send('You have zero saved playlists!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 
@@ -44,9 +48,14 @@ module.exports = class DeletePlaylistCommand extends Command {
     if (found) {
       savedPlaylistsClone.splice(location, 1);
       db.set(message.member.id, { savedPlaylists: savedPlaylistsClone });
-      message.reply(`I removed **${playlistName}** from your saved playlists!`);
+      message.channel.send(
+        `I removed **${playlistName}** from your saved playlists!`,
+        { reply: { messageReference: message.id } }
+      );
     } else {
-      message.reply(`You have no playlist named ${playlistName}`);
+      message.channel.send(`You have no playlist named ${playlistName}`, {
+        reply: { messageReference: message.id }
+      });
     }
   }
 };

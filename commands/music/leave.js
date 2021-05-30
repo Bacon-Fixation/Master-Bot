@@ -15,7 +15,12 @@ module.exports = class LeaveCommand extends Command {
   run(message) {
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
+      message.channel.send(
+        ':no_entry: Please join a voice channel and try again!',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     } else if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
@@ -27,20 +32,26 @@ module.exports = class LeaveCommand extends Command {
       ) {
         message.guild.me.voice.channel.leave();
       } else {
-        message.reply(':x: There is no song playing right now!');
+        message.channel.send(':x: There is no song playing right now!', {
+          reply: { messageReference: message.id }
+        });
       }
       return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
-      message.reply(
-        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
+      message.channel.send(
+        `:no_entry: You must be in the same voice channel as the bot in order to use that!`,
+        { reply: { messageReference: message.id } }
       );
       return;
     } else if (message.guild.triviaData.isTriviaRunning) {
-      message.reply(
-        `Use stop-trivia command in order to stop the music trivia!`
+      message.channel.send(
+        `Use stop-trivia command in order to stop the music trivia!`,
+        { reply: { messageReference: message.id } }
       );
     } else if (!message.guild.musicData.queue) {
-      message.reply(':x: There are no songs in queue');
+      message.channel.send(':x: There are no songs in queue', {
+        reply: { messageReference: message.id }
+      });
       return;
     } else if (message.guild.musicData.songDispatcher.paused) {
       message.guild.musicData.songDispatcher.resume();
@@ -50,8 +61,9 @@ module.exports = class LeaveCommand extends Command {
       setTimeout(() => {
         message.guild.musicData.songDispatcher.end();
       }, 100);
-      message.reply(
-        `:grey_exclamation: ${this.client.user.username} has left the channel.`
+      message.channel.send(
+        `:grey_exclamation: ${this.client.user.username} has left the channel.`,
+        { reply: { messageReference: message.id } }
       );
       return;
     } else {
@@ -60,8 +72,9 @@ module.exports = class LeaveCommand extends Command {
       message.guild.musicData.loopSong = false;
       message.guild.musicData.loopQueue = false;
       message.guild.musicData.songDispatcher.end();
-      message.reply(
-        `:grey_exclamation: ${this.client.user.username} has left the channel.`
+      message.channel.send(
+        `:grey_exclamation: ${this.client.user.username} has left the channel.`,
+        { reply: { messageReference: message.id } }
       );
       return;
     }

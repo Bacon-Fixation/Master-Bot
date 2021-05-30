@@ -25,7 +25,9 @@ module.exports = class DogCommand extends Command {
       .then(res => res.json())
       .then(json => message.channel.send(json.results[0].url))
       .catch(err => {
-        message.reply(':x: Request to find a doggo failed!');
+        message.channel.send(':x: Request to find a doggo failed!', {
+          reply: { messageReference: message.id }
+        });
         return console.error(err);
       });
   }

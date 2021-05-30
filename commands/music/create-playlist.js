@@ -25,7 +25,9 @@ module.exports = class CreatePlaylistCommand extends Command {
       db.set(message.member.id, {
         savedPlaylists: [{ name: playlistName, urls: [] }]
       });
-      message.reply(`Created a new playlist named **${playlistName}**`);
+      message.channel.send(`Created a new playlist named **${playlistName}**`, {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     // make sure the playlist name isn't a duplicate
@@ -35,14 +37,17 @@ module.exports = class CreatePlaylistCommand extends Command {
         return playlist.name == playlistName;
       }).length > 0
     ) {
-      message.reply(
-        `There is already a playlist named **${playlistName}** in your saved playlists!`
+      message.channel.send(
+        `There is already a playlist named **${playlistName}** in your saved playlists!`,
+        { reply: { messageReference: message.id } }
       );
       return;
     }
     // create and save the playlist in the db
     savedPlaylistsClone.push({ name: playlistName, urls: [] });
     db.set(`${message.member.id}.savedPlaylists`, savedPlaylistsClone);
-    message.reply(`Created a new playlist named **${playlistName}**`);
+    message.channel.send(`Created a new playlist named **${playlistName}**`, {
+      reply: { messageReference: message.id }
+    });
   }
 };

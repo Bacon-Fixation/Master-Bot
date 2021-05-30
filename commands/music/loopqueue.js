@@ -22,27 +22,35 @@ module.exports = class LoopQueueCommand extends Command {
 
   run(message) {
     if (!message.guild.musicData.isPlaying) {
-      message.reply(':x: There is no song playing right now!');
+      message.channel.send(':x: There is no song playing right now!', {
+        reply: { messageReference: message.id }
+      });
       return;
     } else if (
       message.guild.musicData.isPlaying &&
       message.guild.triviaData.isTriviaRunning
     ) {
-      message.reply(':x: You cannot loop over a trivia!');
+      message.channel.send(':x: You cannot loop over a trivia!', {
+        reply: { messageReference: message.id }
+      });
       return;
     } else if (
       message.member.voice.channel.id !== message.guild.me.voice.channel.id
     ) {
-      message.reply(
-        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
+      message.channel.send(
+        `:no_entry: You must be in the same voice channel as the bot in order to use that!`,
+        { reply: { messageReference: message.id } }
       );
       return;
     } else if (message.guild.musicData.queue.length == 0) {
-      message.reply(`:x: I can't loop over an empty queue!`);
+      message.channel.send(`:x: I can't loop over an empty queue!`, {
+        reply: { messageReference: message.id }
+      });
       return;
     } else if (message.guild.musicData.loopSong) {
-      message.reply(
-        ':x: Turn off the **loop** command before using the **loopqueue** command'
+      message.channel.send(
+        ':x: Turn off the **loop** command before using the **loopqueue** command',
+        { reply: { messageReference: message.id } }
       );
       return;
     }

@@ -51,8 +51,9 @@ module.exports = class TranslateCommand extends Command {
         message.channel.send(embed);
       })
       .catch(error => {
-        message.reply(
-          ':x: Something went wrong when trying to translate the text'
+        message.channel.send(
+          ':x: Something went wrong when trying to translate the text',
+          { reply: { messageReference: message.id } }
         );
         console.error(error);
       });

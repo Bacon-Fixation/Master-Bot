@@ -72,7 +72,12 @@ module.exports = class RedditCommand extends Command {
         var timeFilter = t.first().content;
       } catch (e) {
         console.error(e);
-        message.reply(':x: Please try again and enter a proper time filter!');
+        message.channel.send(
+          ':x: Please try again and enter a proper time filter!',
+          {
+            reply: { messageReference: message.id }
+          }
+        );
         return;
       }
     }

@@ -39,11 +39,14 @@ module.exports = class LyricsCommand extends Command {
     ) {
       songName = message.guild.musicData.nowPlaying.title;
     } else if (songName == '' && message.guild.triviaData.isTriviaRunning) {
-      message.reply(':x: Please try again after the trivia has ended');
+      message.channel.send(':x: Please try again after the trivia has ended', {
+        reply: { messageReference: message.id }
+      });
       return;
     } else if (songName == '' && !message.guild.musicData.isPlaying) {
-      message.reply(
-        ':no_entry: There is no song playing right now, please try again with a song name or play a song first!'
+      message.channel.send(
+        ':no_entry: There is no song playing right now, please try again with a song name or play a song first!',
+        { reply: { messageReference: message.id } }
       );
       return;
     }
@@ -87,7 +90,7 @@ module.exports = class LyricsCommand extends Command {
           msg.delete({ timeout: 2000 });
         });
     } catch (err) {
-      message.reply(err);
+      message.channel.send(err, { reply: { messageReference: message.id } });
     }
   }
 

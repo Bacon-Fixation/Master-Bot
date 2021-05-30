@@ -41,7 +41,7 @@ module.exports = class TwitchStatusCommand extends Command {
         textFiltered
       );
     } catch (e) {
-      message.reply(e);
+      message.channel.send(e, { reply: { messageReference: message.id } });
       return;
     }
 
@@ -53,7 +53,7 @@ module.exports = class TwitchStatusCommand extends Command {
         user_id
       );
     } catch (e) {
-      message.reply(e);
+      message.channel.send(e, { reply: { messageReference: message.id } });
       return;
     }
 
@@ -114,7 +114,7 @@ module.exports = class TwitchStatusCommand extends Command {
       // Use helpful Attachment class structure to process the file for you
       var attachment = new MessageAttachment(canvas.toBuffer(), 'box_art.png');
     } catch (e) {
-      message.reply(e);
+      message.channel.send(e, { reply: { messageReference: message.id } });
       return;
     }
 

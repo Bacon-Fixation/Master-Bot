@@ -15,11 +15,15 @@ module.exports = class QueueCommand extends Command {
 
   run(message) {
     if (message.guild.triviaData.isTriviaRunning) {
-      message.reply(':x: Try again after the trivia has ended!');
+      message.channel.send(':x: Try again after the trivia has ended!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     if (message.guild.musicData.queue.length == 0) {
-      message.reply(':x: There are no songs in queue!');
+      message.channel.send(':x: There are no songs in queue!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     const queueClone = message.guild.musicData.queue;

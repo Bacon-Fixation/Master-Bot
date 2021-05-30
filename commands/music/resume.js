@@ -15,7 +15,12 @@ module.exports = class ResumeCommand extends Command {
   run(message) {
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
+      message.channel.send(
+        ':no_entry: Please join a voice channel and try again!',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     }
 
@@ -23,16 +28,21 @@ module.exports = class ResumeCommand extends Command {
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher === null
     ) {
-      message.reply(':x: There is no song playing right now!');
+      message.channel.send(':x: There is no song playing right now!', {
+        reply: { messageReference: message.id }
+      });
       return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
-      message.reply(
-        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
+      message.channel.send(
+        `:no_entry: You must be in the same voice channel as the bot in order to use that!`,
+        { reply: { messageReference: message.id } }
       );
       return;
     }
 
-    message.reply(':play_pause: Song resumed!');
+    message.channel.send(':play_pause: Song resumed!', {
+      reply: { messageReference: message.id }
+    });
     message.guild.musicData.songDispatcher.resume();
   }
 };

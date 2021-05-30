@@ -36,7 +36,12 @@ module.exports = class ChuckNorrisCommand extends Command {
         return;
       })
       .catch(err => {
-        message.reply(':x: An error occured, Chuck is investigating this!');
+        message.channel.send(
+          ':x: An error occured, Chuck is investigating this!',
+          {
+            reply: { messageReference: message.id }
+          }
+        );
         return console.error(err);
       });
   }

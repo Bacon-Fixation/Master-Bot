@@ -34,7 +34,9 @@ module.exports = class FortuneCommand extends Command {
       message.channel.send(embed);
       return;
     } catch (e) {
-      message.reply(':x: Could not obtain a fortune cookie!');
+      message.channel.send(':x: Could not obtain a fortune cookie!', {
+        reply: { messageReference: message.id }
+      });
       return console.error(e);
     }
   }

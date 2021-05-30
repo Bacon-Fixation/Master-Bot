@@ -34,12 +34,16 @@ module.exports = class MySplitsIOCommand extends Command {
     ).then(userRes => userRes.json());
 
     if (userRes.runners.length == 0) {
-      message.reply(':x: The Runner ' + userQuery + ' was  not found.');
+      message.channel.send(':x: The Runner ' + userQuery + ' was  not found.', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 
     if (userRes.status == 404) {
-      message.reply(':x: The Runner ' + userQuery + ' was  not found.');
+      message.channel.send(':x: The Runner ' + userQuery + ' was  not found.', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 
@@ -57,7 +61,12 @@ module.exports = class MySplitsIOCommand extends Command {
       return;
     }
     if (pbsRes.status == 404) {
-      message.reply(':x: The User ' + userQuery + 's stats were not found.');
+      message.channel.send(
+        ':x: The User ' + userQuery + 's stats were not found.',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     }
 

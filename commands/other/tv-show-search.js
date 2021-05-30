@@ -123,7 +123,9 @@ module.exports = class TvShowSearchCommand extends Command {
       // Build Embeds
       showsEmbed.build();
     } catch (error) {
-      message.reply(':x: Something went wrong with your request.');
+      message.channel.send(':x: Something went wrong with your request.', {
+        reply: { messageReference: message.id }
+      });
       console.log(error);
     }
   }

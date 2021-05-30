@@ -35,19 +35,27 @@ module.exports = class TicTacToeCommand extends Command {
     const player1 = message.author;
 
     if (player1.id === player2.id) {
-      message.reply("Sorry can't play against yourself");
+      message.channel.send("Sorry can't play against yourself", {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     if (player2.bot) {
-      message.reply("Sorry can't play against a bot user");
+      message.channel.send("Sorry can't play against a bot user", {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     if (message.guild.gameData.tictactoePlayers.has(player1.id)) {
-      message.reply("You can't play more than 1 game at a time");
+      message.channel.send("You can't play more than 1 game at a time", {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     if (message.guild.gameData.tictactoePlayers.has(player2.id)) {
-      message.reply(`${player2.username} is already playing`);
+      message.channel.send(`${player2.username} is already playing`, {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 

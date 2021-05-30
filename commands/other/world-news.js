@@ -53,7 +53,9 @@ module.exports = class GlobalNewsCommand extends Command {
 
       embed.build();
     } catch (e) {
-      message.reply(':x: Something failed along the way!');
+      message.channel.send(':x: Something failed along the way!', {
+        reply: { messageReference: message.id }
+      });
       return console.error(e);
     }
   }

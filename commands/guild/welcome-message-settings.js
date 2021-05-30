@@ -134,7 +134,10 @@ module.exports = class WelcomeSettingsCommand extends Command {
         wallpaperURL) == 's' &&
       !DBInfo
     ) {
-      message.reply(':x: No saved values were found: Cannot use "s" this time');
+      message.channel.send(
+        ':x: No saved values were found: Cannot use "s" this time',
+        { reply: { messageReference: message.id } }
+      );
       return;
     }
 
@@ -148,7 +151,12 @@ module.exports = class WelcomeSettingsCommand extends Command {
         destinationChannel = message.guild.channels.cache.get(destination);
 
       if (!destinationChannel)
-        return message.reply(':x: ' + destination + ' could not be found.');
+        return message.channel.send(
+          ':x: ' + destination + ' could not be found.',
+          {
+            reply: { messageReference: message.id }
+          }
+        );
     }
     if (destination == `direct message`) destination = destination;
     else destination = destinationChannel.name;

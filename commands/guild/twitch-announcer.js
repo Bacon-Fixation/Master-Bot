@@ -53,10 +53,11 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
     // Error Missing DB
     if (DBInfo == undefined) {
-      message.reply(
+      message.channel.send(
         ':no_entry: No settings were found, please run `' +
           `${prefix}twitch-announcer-settings` +
-          '` first'
+          '` first',
+        { reply: { messageReference: message.id } }
       );
       return;
     }
@@ -68,7 +69,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         `${DBInfo.name}`
       );
     } catch (e) {
-      message.reply(':x: ' + e);
+      message.channel.send(':x: ' + e, {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 
@@ -161,7 +164,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               message.guild.twitchData.Interval = clearInterval(
                 message.guild.twitchData.Interval
               );
-              message.reply(':x: Twitch Announcer has stopped!\n' + e);
+              message.channel.send(':x: Twitch Announcer has stopped!\n' + e, {
+                reply: { messageReference: message.id }
+              });
             }
             return;
           }
@@ -198,7 +203,12 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 message.guild.twitchData.Interval = clearInterval(
                   message.guild.twitchData.Interval
                 );
-                message.reply(':x: Twitch Announcer has stopped!\n' + e);
+                message.channel.send(
+                  ':x: Twitch Announcer has stopped!\n' + e,
+                  {
+                    reply: { messageReference: message.id }
+                  }
+                );
               }
               return;
             }
@@ -233,7 +243,12 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 message.guild.twitchData.Interval = clearInterval(
                   message.guild.twitchData.Interval
                 );
-                message.reply(':x: Twitch Announcer has stopped!\n' + e);
+                message.channel.send(
+                  ':x: Twitch Announcer has stopped!\n' + e,
+                  {
+                    reply: { messageReference: message.id }
+                  }
+                );
               }
               return;
             }
@@ -295,7 +310,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             } catch (error) {
               ++failedAttempts;
               if (failedAttempts == 5) {
-                message.reply(':x: Could not send message to channel');
+                message.channel.send(':x: Could not send message to channel', {
+                  reply: { messageReference: message.id }
+                });
                 console.log(error);
                 message.guild.twitchData.isRunning = false;
                 message.guild.twitchData.Interval = clearInterval(
@@ -323,7 +340,12 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 message.guild.twitchData.Interval = clearInterval(
                   message.guild.twitchData.Interval
                 );
-                message.reply(':x: Twitch Announcer has stopped!\n' + e);
+                message.channel.send(
+                  ':x: Twitch Announcer has stopped!\n' + e,
+                  {
+                    reply: { messageReference: message.id }
+                  }
+                );
               }
               return;
             }
@@ -381,7 +403,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             } catch (error) {
               ++failedAttempts;
               if (failedAttempts == 5) {
-                message.reply(':x: Could not edit message');
+                message.channel.send(':x: Could not edit message', {
+                  reply: { messageReference: message.id }
+                });
                 console.log(error);
                 message.guild.twitchData.isRunning = false;
                 message.guild.twitchData.Interval = clearInterval(

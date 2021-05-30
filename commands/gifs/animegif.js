@@ -27,7 +27,9 @@ module.exports = class AnimegifCommand extends Command {
         message.channel.send(json.results[Math.floor(Math.random() * 49)].url)
       )
       .catch(function onError() {
-        message.reply(':x: Failed to find a gif!');
+        message.channel.send(':x: Failed to find a gif!', {
+          reply: { messageReference: message.id }
+        });
         return;
       });
   }

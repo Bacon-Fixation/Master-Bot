@@ -49,7 +49,9 @@ module.exports = class GintamaCommand extends Command {
         })
       */
     } catch (e) {
-      message.reply(':x: Failed to fetch a gintama gif!');
+      message.reply(':x: Failed to fetch a gintama gif!', {
+        reply: { messageReference: message.id }
+      });
       return console.error(e);
     }
   }

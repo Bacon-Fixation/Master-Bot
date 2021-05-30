@@ -34,8 +34,9 @@ module.exports = class NicknameCommand extends Command {
       try {
         await memberName.setNickname('');
       } catch {
-        message.reply(
-          `:x: Can't change nickname, requested member has a higher role than you`
+        message.channel.send(
+          `:x: Can't change nickname, requested member has a higher role than you`,
+          { reply: { messageReference: message.id } }
         );
         return;
       }
@@ -60,7 +61,7 @@ module.exports = class NicknameCommand extends Command {
         message.channel.send(nickRemoved);
         return;
       } catch {
-        message.reply(':x: Something went wrong removing nickname');
+        message.channel.send(':x: Something went wrong removing nickname');
         return;
       }
     } else {
@@ -68,8 +69,9 @@ module.exports = class NicknameCommand extends Command {
       try {
         await memberName.setNickname(nickname);
       } catch {
-        message.reply(
-          `:x: Can't change nickname, requested member has a higher role than you`
+        message.channel.send(
+          `:x: Can't change nickname, requested member has a higher role than you`,
+          { reply: { messageReference: message.id } }
         );
         return;
       }
@@ -96,7 +98,12 @@ module.exports = class NicknameCommand extends Command {
         message.channel.send(nickChanged);
         return;
       } catch {
-        message.reply(':x: Something went wrong when changing nickname');
+        message.channel.send(
+          ':x: Something went wrong when changing nickname',
+          {
+            reply: { messageReference: message.id }
+          }
+        );
         return;
       }
     }

@@ -35,7 +35,9 @@ module.exports = class SpeedrunBasicCommand extends Command {
 
     const initial = await respInitial.json();
     if (initial.data.length === 0) {
-      message.reply(':x: No game was found.');
+      message.channel.send(':x: No game was found.', {
+        reply: { messageReference: message.id }
+      });
     } else {
       let gameID = initial.data[0].id;
 
@@ -219,7 +221,9 @@ module.exports = class SpeedrunBasicCommand extends Command {
                     '🔽' + category[number - 1].category.data.name
                   );
               } catch (error) {
-                message.reply(':x: Something went wrong');
+                message.channel.send(':x: Something went wrong', {
+                  reply: { messageReference: message.id }
+                });
                 console.log(error);
               }
             })
@@ -307,7 +311,9 @@ module.exports = class SpeedrunBasicCommand extends Command {
                     '🔼' + category[number + 1].category.data.name
                   );
               } catch (error) {
-                message.reply(':x: Something went wrong');
+                message.channel.send(':x: Something went wrong', {
+                  reply: { messageReference: message.id }
+                });
                 console.log(error);
               }
             });

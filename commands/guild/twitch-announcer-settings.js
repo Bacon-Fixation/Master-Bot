@@ -82,8 +82,9 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     try {
       await message.delete();
     } catch {
-      message.reply(
-        `:no_entry: Bot needs permission to manage messages in order to use Twitch Announcer Feature`
+      message.channel.send(
+        `:no_entry: Bot needs permission to manage messages in order to use Twitch Announcer Feature`,
+        { reply: { messageReference: message.id } }
       );
       return;
     }
@@ -97,7 +98,9 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         textFiltered
       );
     } catch (e) {
-      message.reply(':x: ' + e);
+      message.channel.send(':x: ' + e, {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 

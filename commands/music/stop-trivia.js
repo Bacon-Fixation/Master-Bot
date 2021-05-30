@@ -19,18 +19,26 @@ module.exports = class StopMusicTriviaCommand extends Command {
   }
   run(message) {
     if (!message.guild.triviaData.isTriviaRunning) {
-      message.reply(':x: No trivia is currently running!');
+      message.channel.send(':x: No trivia is currently running!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 
     if (message.guild.me.voice.channel !== message.member.voice.channel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
+      message.channel.send(
+        ':no_entry: Please join a voice channel and try again!',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     }
 
     if (!message.guild.triviaData.triviaScore.has(message.author.username)) {
-      message.reply(
-        ':stop_sign: You need to participate in the trivia in order to end it'
+      message.channel.send(
+        ':stop_sign: You need to participate in the trivia in order to end it',
+        { reply: { messageReference: message.id } }
       );
       return;
     }

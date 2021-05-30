@@ -40,11 +40,15 @@ module.exports = class Connect4Command extends Command {
       return message.channel.send("Sorry can't play against a bot user");
     }
     if (message.guild.gameData.connect4Players.has(player1.id)) {
-      message.reply("You can't play more than 1 game at a time");
+      message.channel.send("You can't play more than 1 game at a time", {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     if (message.guild.gameData.connect4Players.has(player2.id)) {
-      message.reply(`${player2.username} is already playing`);
+      message.channel.send(`${player2.username} is already playing`, {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 

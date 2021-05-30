@@ -47,8 +47,9 @@ module.exports = class ARCommand extends Command {
       })
       .then(() => message.delete().catch(e => console.error(e))) // nested promise
       .catch(err => {
-        message.reply(
-          ':x: Something went wrong when trying to assign role to this user'
+        message.channel.send(
+          ':x: Something went wrong when trying to assign role to this user',
+          { reply: { messageReference: message.id } }
         );
         return console.error(err);
       });

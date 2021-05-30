@@ -63,8 +63,9 @@ module.exports = class LookupCommand extends Command {
       message.channel.send(embedResolve(json.isp));
     } catch (e) {
       console.error(e);
-      message.reply(
-        'Something went wrong looking for that result, is the api throttled?'
+      message.channel.send(
+        'Something went wrong looking for that result, is the api throttled?',
+        { reply: { messageReference: message.id } }
       );
       return;
     }

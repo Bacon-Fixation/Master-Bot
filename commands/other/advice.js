@@ -34,7 +34,9 @@ module.exports = class AdviceCommand extends Command {
         return;
       })
       .catch(err => {
-        message.reply('Failed to deliver advice :sob:');
+        message.channel.send('Failed to deliver advice :sob:', {
+          reply: { messageReference: message.id }
+        });
         return console.error(err);
       });
   }

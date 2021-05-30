@@ -14,7 +14,12 @@ module.exports = class ShuffleQueueCommand extends Command {
   run(message) {
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
+      message.channel.send(
+        ':no_entry: Please join a voice channel and try again!',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     }
 
@@ -22,21 +27,27 @@ module.exports = class ShuffleQueueCommand extends Command {
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      message.reply(':x: There is nothing playing right now!');
+      message.channel.send(':x: There is nothing playing right now!', {
+        reply: { messageReference: message.id }
+      });
       return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
-      message.reply(
-        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
+      message.channel.send(
+        `:no_entry: You must be in the same voice channel as the bot in order to use that!`,
+        { reply: { messageReference: message.id } }
       );
       return;
     } else if (message.guild.musicData.loopSong) {
-      message.reply(
-        ':x: Turn off the **loop** command before using the **shuffle** command!'
+      message.channel.send(
+        ':x: Turn off the **loop** command before using the **shuffle** command!',
+        { reply: { messageReference: message.id } }
       );
       return;
     }
     if (message.guild.musicData.queue.length < 1) {
-      message.reply(':x: There are no songs in queue!');
+      message.channel.send(':x: There are no songs in queue!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 

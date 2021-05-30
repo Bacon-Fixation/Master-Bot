@@ -46,12 +46,15 @@ module.exports = class JojoCommand extends Command {
         .then(res => res.json())
         .then(json => message.channel.send(json.results[0].url))
         .catch(e => {
-          message.reply('Failed to fetch a gif :slight_frown:');
+          message.channel.send('Failed to fetch a gif :slight_frown:',
+          { reply: { messageReference: message.id } });
           return console.error(e);
         })
       */
     } catch (e) {
-      message.reply(':x: Failed to fetch a gif!');
+      message.channel.send(':x: Failed to fetch a gif!', {
+        reply: { messageReference: message.id }
+      });
       return console.error(e);
     }
   }

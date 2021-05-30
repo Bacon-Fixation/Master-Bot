@@ -33,12 +33,16 @@ module.exports = class SaveToPlaylistCommand extends Command {
     // check if user has playlists or user is in the db
     const dbUserFetch = db.get(message.member.id);
     if (!dbUserFetch) {
-      message.reply('You have zero saved playlists!');
+      message.channel.send('You have zero saved playlists!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     const savedPlaylistsClone = dbUserFetch.savedPlaylists;
     if (savedPlaylistsClone.length == 0) {
-      message.reply('You have zero saved playlists!');
+      message.channel.send('You have zero saved playlists!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 
@@ -54,13 +58,16 @@ module.exports = class SaveToPlaylistCommand extends Command {
     if (found) {
       const urlsArrayClone = savedPlaylistsClone[location].urls;
       if (urlsArrayClone.length == 0) {
-        message.reply(`**${playlist}** is empty!`);
+        message.channel.send(`**${playlist}** is empty!`, {
+          reply: { messageReference: message.id }
+        });
         return;
       }
 
       if (index > urlsArrayClone.length) {
-        message.reply(
-          `The index you provided is larger than the playlist's length`
+        message.channel.send(
+          `The index you provided is larger than the playlist's length`,
+          { reply: { messageReference: message.id } }
         );
         return;
       }
@@ -68,12 +75,15 @@ module.exports = class SaveToPlaylistCommand extends Command {
       urlsArrayClone.splice(index - 1, 1);
       savedPlaylistsClone[location].urls = urlsArrayClone;
       db.set(message.member.id, { savedPlaylists: savedPlaylistsClone });
-      message.reply(
-        `I removed **${title}** from **${savedPlaylistsClone[location].name}**`
+      message.channel.send(
+        `I removed **${title}** from **${savedPlaylistsClone[location].name}**`,
+        { reply: { messageReference: message.id } }
       );
       return;
     } else {
-      message.reply(`You have no playlist named **${playlist}**`);
+      message.channel.send(`You have no playlist named **${playlist}**`, {
+        reply: { messageReference: message.id }
+      });
       return;
     }
   }

@@ -16,7 +16,12 @@ module.exports = class SkipCommand extends Command {
   run(message) {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
+      message.channel.send(
+        ':no_entry: Please join a voice channel and try again!',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     }
 
@@ -24,15 +29,20 @@ module.exports = class SkipCommand extends Command {
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      message.reply(':x: There is no song playing right now!');
+      message.channel.send(':x: There is no song playing right now!', {
+        reply: { messageReference: message.id }
+      });
       return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
-      message.reply(
-        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
+      message.channel.send(
+        `:no_entry: You must be in the same voice channel as the bot in order to use that!`,
+        { reply: { messageReference: message.id } }
       );
       return;
     } else if (message.guild.triviaData.isTriviaRunning) {
-      message.reply(`You can't skip a trivia! Use ${prefix}end-trivia`);
+      message.channel.send(`You can't skip a trivia! Use ${prefix}end-trivia`, {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     message.guild.musicData.loopSong = false;

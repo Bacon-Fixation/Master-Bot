@@ -17,23 +17,33 @@ module.exports = class JoinCommand extends Command {
   async run(message) {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
+      message.channel.send(
+        ':no_entry: Please join a voice channel and try again!',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     }
     if (message.guild.triviaData.isTriviaRunning == true) {
-      message.reply(':x: Please try after the trivia has ended!');
+      message.channel.send(':x: Please try after the trivia has ended!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     if (message.guild.musicData.isPlaying != true) {
-      message.reply(':x: Nothing is Playing');
+      message.channel.send(':x: Nothing is Playing', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     try {
       await voiceChannel.join();
       return;
     } catch {
-      message.reply(
-        ':x Something went wrong while attempting to move channels'
+      message.channel.send(
+        ':x Something went wrong while attempting to move channels',
+        { reply: { messageReference: message.id } }
       );
       return;
     }

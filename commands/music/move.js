@@ -35,28 +35,42 @@ module.exports = class MoveSongCommand extends Command {
       newPosition > message.guild.musicData.queue.length ||
       oldPosition == newPosition
     ) {
-      message.reply(':x: Try again and enter a valid song position number');
+      message.channel.send(
+        ':x: Try again and enter a valid song position number',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     }
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
+      message.channel.send(
+        ':no_entry: Please join a voice channel and try again!',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     }
     if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      message.reply(':x: There is nothing playing right now!');
+      message.channel.send(':x: There is nothing playing right now!', {
+        reply: { messageReference: message.id }
+      });
       return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
-      message.reply(
-        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
+      message.channel.send(
+        `:no_entry: You must be in the same voice channel as the bot in order to use that!`,
+        { reply: { messageReference: message.id } }
       );
       return;
     } else if (message.guild.musicData.loopSong) {
-      message.reply(
-        ':x: Turn off the **loop** command before using the **move** command.'
+      message.channel.send(
+        ':x: Turn off the **loop** command before using the **move** command.',
+        { reply: { messageReference: message.id } }
       );
       return;
     }

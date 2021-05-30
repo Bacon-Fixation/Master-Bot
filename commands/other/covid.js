@@ -77,7 +77,9 @@ module.exports = class CovidCommand extends Command {
           message.channel.send(covidall);
         })
         .catch(function onError(err) {
-          message.reply(err);
+          message.channel.send(err, {
+            reply: { messageReference: message.id }
+          });
         });
     } else {
       await CovidCommand.getCountryStats(country)
@@ -134,7 +136,9 @@ module.exports = class CovidCommand extends Command {
           message.channel.send(covidcountry);
         })
         .catch(function onError(err) {
-          message.reply(err);
+          message.channel.send(err, {
+            reply: { messageReference: message.id }
+          });
         });
     }
   }

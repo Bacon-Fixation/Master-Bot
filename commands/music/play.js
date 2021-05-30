@@ -78,13 +78,19 @@ module.exports = class PlayCommand extends Command {
 
   async run(message, { query }) {
     // Make sure that only users present in a voice channel can use 'play'
+    console.log(message.member.voice.channel);
     if (!message.member.voice.channel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
+      message.channel.send(
+        ':no_entry: Please join a voice channel and try again!',
+        { reply: { messageReference: message.id } }
+      );
       return;
     }
     // Make sure there isn't a 'music-trivia' running
     if (message.guild.triviaData.isTriviaRunning) {
-      message.reply(':x: Please try after the trivia has ended!');
+      message.channel.send(':x: Please try after the trivia has ended!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 
@@ -190,8 +196,9 @@ module.exports = class PlayCommand extends Command {
                     message.guild.musicData.queueHistory[index]
                   );
                 }
-                message.reply(
-                  `'${message.guild.musicData.queueHistory[index].title}' was added to queue!`
+                message.channel.send(
+                  `'${message.guild.musicData.queueHistory[index].title}' was added to queue!`,
+                  { reply: { messageReference: message.id } }
                 );
 
                 break;
@@ -318,8 +325,9 @@ module.exports = class PlayCommand extends Command {
                   message.guild.musicData.queueHistory[index]
                 );
               }
-              message.reply(
-                `'${message.guild.musicData.queueHistory[index].title}' was added to queue!`
+              message.channel.send(
+                `'${message.guild.musicData.queueHistory[index].title}' was added to queue!`,
+                { reply: { messageReference: message.id } }
               );
               break;
             // 2: Search for the query on YouTube
@@ -337,14 +345,16 @@ module.exports = class PlayCommand extends Command {
     if (isYouTubePlaylistURL(query)) {
       const playlist = await youtube.getPlaylist(query);
       if (!playlist)
-        return message.reply(
-          ':x: Playlist is either private or it does not exist!'
+        return message.channel.send(
+          ':x: Playlist is either private or it does not exist!',
+          { reply: { messageReference: message.id } }
         );
 
       let videosArr = await playlist.getVideos();
       if (!videosArr)
-        return message.reply(
-          ":x: I hit a problem when trying to fetch the playlist's videos"
+        return message.channel.send(
+          ":x: I hit a problem when trying to fetch the playlist's videos",
+          { reply: { messageReference: message.id } }
         );
 
       if (AutomaticallyShuffleYouTubePlaylists || shuffleFlag) {
@@ -356,8 +366,9 @@ module.exports = class PlayCommand extends Command {
       }
 
       if (message.guild.musicData.queue.length >= maxQueueLength)
-        return message.reply(
-          'The queue is full, please try adding more songs later'
+        return message.channel.send(
+          'The queue is full, please try adding more songs later',
+          { reply: { messageReference: message.id } }
         );
       videosArr = videosArr.splice(
         0,
@@ -426,8 +437,9 @@ module.exports = class PlayCommand extends Command {
         .split(/[^0-9a-z_\-]/i)[0];
 
       const video = await youtube.getVideoByID(id).catch(function() {
-        message.reply(
-          ':x: There was a problem getting the video you provided!'
+        message.channel.send(
+          ':x: There was a problem getting the video you provided!',
+          { reply: { messageReference: message.id } }
         );
       });
       if (!video) return;
@@ -436,22 +448,25 @@ module.exports = class PlayCommand extends Command {
         video.raw.snippet.liveBroadcastContent === 'live' &&
         !playLiveStreams
       ) {
-        message.reply(
-          'Live streams are disabled in this server! Contact the owner'
+        message.channel.send(
+          'Live streams are disabled in this server! Contact the owner',
+          { reply: { messageReference: message.id } }
         );
         return;
       }
 
       if (video.duration.hours !== 0 && !playVideosLongerThan1Hour) {
-        message.reply(
-          'Videos longer than 1 hour are disabled in this server! Contact the owner'
+        message.channel.send(
+          'Videos longer than 1 hour are disabled in this server! Contact the owner',
+          { reply: { messageReference: message.id } }
         );
         return;
       }
 
       if (message.guild.musicData.queue.length > maxQueueLength) {
-        message.reply(
-          `The queue hit its limit of ${maxQueueLength}, please wait a bit before attempting to play more songs`
+        message.channel.send(
+          `The queue hit its limit of ${maxQueueLength}, please wait a bit before attempting to play more songs`,
+          { reply: { messageReference: message.id } }
         );
         return;
       }
@@ -596,7 +611,9 @@ var playSong = (queue, message) => {
           }
         })
         .on('error', function(e) {
-          message.reply(':x: Cannot play song!');
+          message.channel.send(':x: Cannot play song!', {
+            reply: { messageReference: message.id }
+          });
           console.error(e);
           if (queue.length > 1) {
             queue.shift();
@@ -611,7 +628,10 @@ var playSong = (queue, message) => {
         });
     })
     .catch(function() {
-      message.reply(':no_entry: I have no permission to join your channel!');
+      message.channel.send(
+        ':no_entry: I have no permission to join your channel!',
+        { reply: { messageReference: message.id } }
+      );
       message.guild.resetMusicDataOnError();
       if (message.guild.me.voice.channel) {
         message.guild.me.voice.channel.leave();
@@ -645,20 +665,23 @@ var searchYoutube = async (
   jumpFlag
 ) => {
   const videos = await youtube.searchVideos(query, 5).catch(async function() {
-    await message.reply(
-      ':x: There was a problem searching the video you requested!'
+    await message.channel.send(
+      ':x: There was a problem searching the video you requested!',
+      { reply: { messageReference: message.id } }
     );
     return;
   });
   if (!videos) {
-    message.reply(
-      `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
+    message.channel.send(
+      `:x: I had some trouble finding what you were looking for, please try again or be more specific.`,
+      { reply: { messageReference: message.id } }
     );
     return;
   }
   if (videos.length < 5) {
-    message.reply(
-      `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
+    message.channel.send(
+      `:x: I had some trouble finding what you were looking for, please try again or be more specific.`,
+      { reply: { messageReference: message.id } }
     );
     return;
   }
@@ -702,24 +725,27 @@ var searchYoutube = async (
             !playLiveStreams
           ) {
             songEmbed.delete();
-            message.reply(
-              'Live streams are disabled in this server! Contact the owner'
+            message.channel.send(
+              'Live streams are disabled in this server! Contact the owner',
+              { reply: { messageReference: message.id } }
             );
             return;
           }
 
           if (video.duration.hours !== 0 && !playVideosLongerThan1Hour) {
             songEmbed.delete();
-            message.reply(
-              'Videos longer than 1 hour are disabled in this server! Contact the owner'
+            message.channel.send(
+              'Videos longer than 1 hour are disabled in this server! Contact the owner',
+              { reply: { messageReference: message.id } }
             );
             return;
           }
 
           if (message.guild.musicData.queue.length > maxQueueLength) {
             songEmbed.delete();
-            message.reply(
-              `The queue hit its limit of ${maxQueueLength}, please wait a bit before attempting to add more songs`
+            message.channel.send(
+              `The queue hit its limit of ${maxQueueLength}, please wait a bit before attempting to add more songs`,
+              { reply: { messageReference: message.id } }
             );
             return;
           }
@@ -760,8 +786,9 @@ var searchYoutube = async (
           if (songEmbed) {
             songEmbed.delete();
           }
-          message.reply(
-            ':x: An error has occurred when trying to get the video ID from youtube.'
+          message.channel.send(
+            ':x: An error has occurred when trying to get the video ID from youtube.',
+            { reply: { messageReference: message.id } }
           );
           return;
         });
@@ -770,8 +797,9 @@ var searchYoutube = async (
       if (songEmbed) {
         songEmbed.delete();
       }
-      message.reply(
-        ':x: Please try again and enter a number between 1 and 5 or cancel.'
+      message.channel.send(
+        ':x: Please try again and enter a number between 1 and 5 or cancel.',
+        { reply: { messageReference: message.id } }
       );
       return;
     });
@@ -883,7 +911,7 @@ var interactiveEmbed = message => {
           message.guild.musicData.loopQueue = false;
           message.guild.musicData.songDispatcher.end();
         }
-        message.reply(`:grey_exclamation: Leaving the channel.`);
+        message.channel.send(`:grey_exclamation: Leaving the channel.`);
       },
       // Play/Pause Button
       '⏯️': function(_, instance) {

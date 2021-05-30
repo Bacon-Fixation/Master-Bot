@@ -35,7 +35,12 @@ module.exports = class MusicTriviaCommand extends Command {
     // check if user is in a voice channel
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
+      message.channel.send(
+        ':no_entry: Please join a voice channel and try again!',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     }
     if (message.guild.musicData.isPlaying === true)
@@ -103,7 +108,9 @@ module.exports = class MusicTriviaCommand extends Command {
           }
         )
         .on('error', async function(e) {
-          message.reply(':x: Could not play that song!');
+          message.channel.send(':x: Could not play that song!', {
+            reply: { messageReference: message.id }
+          });
           console.log(e);
           if (queue.length > 1) {
             queue.shift();
@@ -159,11 +166,9 @@ module.exports = class MusicTriviaCommand extends Command {
             let guess = normalizeValue(msg.content);
             let title = normalizeValue(queue[0].title);
             let singer = normalizeValue(queue[0].singer);
-            
+
             // if user guessed both
-            if (
-              guess.includes(singer) && guess.includes(title)
-            ) {
+            if (guess.includes(singer) && guess.includes(title)) {
               if (
                 (songSingerFound && !songNameFound) ||
                 (songNameFound && !songSingerFound)
@@ -184,11 +189,9 @@ module.exports = class MusicTriviaCommand extends Command {
               );
               msg.react('☑');
               return collector.stop();
-            } 
+            }
             // if user guessed singer
-            else if (
-              guess.includes(singer)
-            ) {
+            else if (guess.includes(singer)) {
               if (songSingerFound) return; // if singer has already been found
               songSingerFound = true;
               if (songNameFound && songSingerFound) {
@@ -208,7 +211,7 @@ module.exports = class MusicTriviaCommand extends Command {
                   1
               );
               msg.react('☑');
-            } 
+            }
             // if user guessed song name
             else if (guess.includes(title)) {
               if (songNameFound) return; // if song name has already been found
@@ -349,10 +352,11 @@ module.exports = class MusicTriviaCommand extends Command {
   }
 };
 
-var normalizeValue = value => 
+var normalizeValue = value =>
   value
-  .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove diacritics
-  .replace(/[^0-9a-zA-Z\s]/g, '') // remove non-alphanumeric characters
-  .trim()
-  .replace(/\s+/g,' ')
-  .toLowerCase(); // remove duplicate spaces
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // remove diacritics
+    .replace(/[^0-9a-zA-Z\s]/g, '') // remove non-alphanumeric characters
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLowerCase(); // remove duplicate spaces

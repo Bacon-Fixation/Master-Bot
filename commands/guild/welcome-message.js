@@ -131,8 +131,9 @@ module.exports = class WelcomeMessageCommand extends Command {
 
     // Report Settings are Disabled
     if (choice.toLowerCase() == 'no')
-      message.reply(
-        `Welcome Message ***Disabled*** on ${message.member.guild.name}`
+      message.channel.send(
+        `Welcome Message ***Disabled*** on ${message.member.guild.name}`,
+        { reply: { messageReference: message.id } }
       );
   }
 };

@@ -32,7 +32,12 @@ module.exports = class VolumeCommand extends Command {
   run(message, { wantedVolume }) {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
+      message.channel.send(
+        ':no_entry: Please join a voice channel and try again!',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     }
 
@@ -40,11 +45,14 @@ module.exports = class VolumeCommand extends Command {
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      message.reply(':x: There is no song playing right now!');
+      message.channel.send(':x: There is no song playing right now!', {
+        reply: { messageReference: message.id }
+      });
       return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
-      message.reply(
-        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
+      message.channel.send(
+        `:no_entry: You must be in the same voice channel as the bot in order to use that!`,
+        { reply: { messageReference: message.id } }
       );
       return;
     }
@@ -52,6 +60,11 @@ module.exports = class VolumeCommand extends Command {
     message.guild.musicData.volume = volume;
     db.set(`${message.member.guild.id}.serverSettings.volume`, volume);
     message.guild.musicData.songDispatcher.setVolume(volume);
-    message.reply(`:loud_sound: Setting the volume to: ${wantedVolume}%!`);
+    message.channel.send(
+      `:loud_sound: Setting the volume to: ${wantedVolume}%!`,
+      {
+        reply: { messageReference: message.id }
+      }
+    );
   }
 };

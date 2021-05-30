@@ -47,12 +47,16 @@ module.exports = class SaveToPlaylistCommand extends Command {
     // check if user has playlists or user is in the db
     const dbUserFetch = db.get(message.member.id);
     if (!dbUserFetch) {
-      message.reply('You have zero saved playlists!');
+      message.channel.send('You have zero saved playlists!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     const savedPlaylistsClone = dbUserFetch.savedPlaylists;
     if (savedPlaylistsClone.length == 0) {
-      message.reply('You have zero saved playlists!');
+      message.channel.send('You have zero saved playlists!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     let found = false;
@@ -71,21 +75,29 @@ module.exports = class SaveToPlaylistCommand extends Command {
       if (Array.isArray(processedURL)) {
         urlsArrayClone = urlsArrayClone.concat(processedURL);
         savedPlaylistsClone[location].urls = urlsArrayClone;
-        message.reply('The playlist you provided was successfully saved!');
+        message.channel.send(
+          'The playlist you provided was successfully saved!',
+          {
+            reply: { messageReference: message.id }
+          }
+        );
       } else {
         urlsArrayClone.push(processedURL);
         savedPlaylistsClone[location].urls = urlsArrayClone;
-        message.reply(
+        message.channel.send(
           `I added **${
             savedPlaylistsClone[location].urls[
               savedPlaylistsClone[location].urls.length - 1
             ].title
-          }** to **${playlist}**`
+          }** to **${playlist}**`,
+          { reply: { messageReference: message.id } }
         );
       }
       db.set(message.member.id, { savedPlaylists: savedPlaylistsClone });
     } else {
-      message.reply(`You have no playlist named ${playlist}`);
+      message.channel.send(`You have no playlist named ${playlist}`, {
+        reply: { messageReference: message.id }
+      });
       return;
     }
   }
@@ -93,14 +105,20 @@ module.exports = class SaveToPlaylistCommand extends Command {
   static async processURL(url, message) {
     if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
       const playlist = await youtube.getPlaylist(url).catch(function() {
-        message.reply(':x: Playlist is either private or it does not exist!');
+        message.channel.send(
+          ':x: Playlist is either private or it does not exist!',
+          {
+            reply: { messageReference: message.id }
+          }
+        );
       });
       if (!playlist) {
         return false;
       }
       const videosArr = await playlist.getVideos().catch(function() {
-        message.reply(
-          ':x: There was a problem getting one of the videos in the playlist!'
+        message.channel.send(
+          ':x: There was a problem getting one of the videos in the playlist!',
+          { reply: { messageReference: message.id } }
         );
         return;
       });
@@ -126,11 +144,18 @@ module.exports = class SaveToPlaylistCommand extends Command {
       .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
     const id = url[2].split(/[^0-9a-z_\-]/i)[0];
     const video = await youtube.getVideoByID(id).catch(function() {
-      message.reply(':x: There was a problem getting the video you provided!');
+      message.channel.send(
+        ':x: There was a problem getting the video you provided!',
+        {
+          reply: { messageReference: message.id }
+        }
+      );
       return;
     });
     if (video.raw.snippet.liveBroadcastContent === 'live') {
-      message.reply("I don't support live streams!");
+      message.channel.send("I don't support live streams!", {
+        reply: { messageReference: message.id }
+      });
       return false;
     }
     return SaveToPlaylistCommand.constructSongObj(video, message.member.user);

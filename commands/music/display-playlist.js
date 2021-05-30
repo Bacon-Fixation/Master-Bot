@@ -25,12 +25,16 @@ module.exports = class DisplayPlaylistCommand extends Command {
     // check if user has playlists or user is in the db
     const dbUserFetch = db.get(message.member.id);
     if (!dbUserFetch) {
-      message.reply('You have zero saved playlists!');
+      message.channel.send('You have zero saved playlists!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
     const savedPlaylistsClone = dbUserFetch.savedPlaylists;
     if (savedPlaylistsClone.length == 0) {
-      message.reply('You have zero saved playlists!');
+      message.channel.send('You have zero saved playlists!', {
+        reply: { messageReference: message.id }
+      });
       return;
     }
 
@@ -46,7 +50,9 @@ module.exports = class DisplayPlaylistCommand extends Command {
     if (found) {
       const urlsArrayClone = savedPlaylistsClone[location].urls;
       if (urlsArrayClone.length == 0) {
-        message.reply(`**${playlistName}** is empty!`);
+        message.channel.send(`**${playlistName}** is empty!`, {
+          reply: { messageReference: message.id }
+        });
         return;
       }
       const savedSongsEmbed = new Pagination.FieldsEmbed()
@@ -60,7 +66,9 @@ module.exports = class DisplayPlaylistCommand extends Command {
       savedSongsEmbed.embed.setColor('#ff7373').setTitle('Saved Songs');
       savedSongsEmbed.build();
     } else {
-      message.reply(`You have no playlist named ${playlistName}`);
+      message.channel.send(`You have no playlist named ${playlistName}`, {
+        reply: { messageReference: message.id }
+      });
     }
   }
 };

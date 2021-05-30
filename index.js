@@ -1,5 +1,11 @@
 const { CommandoClient } = require('discord.js-commando');
-const { Structures, MessageEmbed, MessageAttachment } = require('discord.js');
+// const { MessageEmbed, MessageAttachment } = require('discord.js');
+const {
+  Intents,
+  Structures,
+  MessageEmbed,
+  MessageAttachment
+} = require('discord.js');
 const path = require('path');
 const { prefix, token, discord_owner_id } = require('./config.json');
 const db = require('quick.db');
@@ -49,6 +55,11 @@ Structures.extend('Guild', function(Guild) {
 });
 
 const client = new CommandoClient({
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_VOICE_STATES
+  ],
   commandPrefix: prefix,
   owner: discord_owner_id
 });
@@ -83,7 +94,7 @@ client.once('ready', () => {
     family: 'Open Sans Light'
   });
 });
-client.on('voiceStateUpdate', async (___, newState) => {
+client.on('voiceStateUpdate', async (oldState, newState) => {
   if (
     newState.member.user.bot &&
     !newState.channelID &&
@@ -102,6 +113,10 @@ client.on('voiceStateUpdate', async (___, newState) => {
   ) {
     newState.setSelfDeaf(true);
   }
+  console.log(oldState);
+  console.log(newState);
+  // if (!newState.channel) return; //is stage
+  // if (!oldState.channel) return; //is stage
 });
 
 client.on('guildMemberAdd', async member => {
