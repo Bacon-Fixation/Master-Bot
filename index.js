@@ -58,7 +58,14 @@ const client = new CommandoClient({
   intents: [
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_VOICE_STATES
+    Intents.FLAGS.GUILD_VOICE_STATES,
+    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    Intents.FLAGS.GUILD_BANS,
+    Intents.FLAGS.DIRECT_MESSAGES,
+    // Intents.FLAGS.GUILD_MEMBERS
+    Intents.FLAGS.GUILD_EMOJIS,
+    Intents.FLAGS.GUILD_INVITES
+    //  Intents.PRIVILEGED
   ],
   commandPrefix: prefix,
   owner: discord_owner_id
@@ -113,8 +120,6 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
   ) {
     newState.setSelfDeaf(true);
   }
-  console.log(oldState);
-  console.log(newState);
   // if (!newState.channel) return; //is stage
   // if (!oldState.channel) return; //is stage
 });
