@@ -530,9 +530,6 @@ var playSong = (queue, message) => {
     }
   }
 
-  if (message.member.voice.channel.type === 'stage') {
-    message.member.voice.channel.setTopic(queue[0].title);
-  }
   queue[0].voiceChannel
     .join()
     .then(function(connection) {
@@ -560,11 +557,6 @@ var playSong = (queue, message) => {
           queue.shift();
           // Main Message
           interactiveEmbed(message).build();
-          if (message.member.voice.channel.type === 'stage') {
-            message.member.voice.channel.setTopic(
-              message.guild.musicData.nowPlaying.title
-            );
-          }
         })
         .on('finish', function() {
           // Save the volume when the song ends
@@ -904,7 +896,7 @@ var interactiveEmbed = message => {
           .setTitle(':stop_button: Stopped')
           .setTimeout(100);
 
-        if (message.guild.musicData.songDispatcher.paused == true) {
+        if (message.guild.musicData.songDispatcher.paused) {
           message.guild.musicData.songDispatcher.resume();
           message.guild.musicData.queue.length = 0;
           message.guild.musicData.loopSong = false;
@@ -913,7 +905,8 @@ var interactiveEmbed = message => {
           setTimeout(() => {
             message.guild.musicData.songDispatcher.end();
           }, 100);
-        } else {
+        }
+        if (!message.guild.musicData.songDispatcher.paused) {
           message.guild.musicData.queue.length = 0;
           message.guild.musicData.skipTimer = true;
           message.guild.musicData.loopSong = false;
@@ -926,13 +919,14 @@ var interactiveEmbed = message => {
       '⏯️': function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
 
-        if (message.guild.musicData.songDispatcher.paused == false) {
+        if (!message.guild.musicData.songDispatcher.paused) {
           message.guild.musicData.songDispatcher.pause();
           instance
             .setDescription(songTitle + playbackBar(message.guild.musicData))
             .setTitle(embedTitle(message))
             .setTimeout(600000);
-        } else {
+        }
+        if (message.guild.musicData.songDispatcher.paused) {
           message.guild.musicData.songDispatcher.resume();
 
           instance

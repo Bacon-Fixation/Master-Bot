@@ -107,6 +107,11 @@ client.on('voiceStateUpdate', async (___, newState) => {
     newState.guild.musicData.songDispatcher &&
     newState.member.user.id == client.user.id
   ) {
+    if (newState.member.voice.channel.topic !== 'YouTube') {
+      newState.member.voice.channel
+        ? newState.member.voice.channel.setTopic('Session Ended')
+        : newState.guild.me.voice.channel.setTopic('Session Ended');
+    }
     newState.guild.musicData.queue.length = 0;
     newState.guild.musicData.songDispatcher.end();
     return;
@@ -129,9 +134,13 @@ client.on('voiceStateUpdate', async (___, newState) => {
   ) {
     if (newState.member.voice.suppress) {
       newState.member.voice.setSuppressed(false);
-      newState.member.voice.setRequestToSpeak(false);
     }
-    return;
+    if (newState.member.voice.channel.topic !== 'YouTube') {
+      newState.member.voice.channel
+        ? newState.member.voice.channel.setTopic('YouTube')
+        : newState.guild.me.voice.channel.setTopic('YouTube');
+    }
+    //return;
   }
 });
 
