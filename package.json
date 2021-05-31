@@ -18,7 +18,6 @@
     "discord-paginationembed": "github:Bacon-Fixation/discord-paginationembed#master",
     "discord.js": "github:discordjs/discord.js#master",
     "discord.js-commando": "github:discordjs/Commando#master",
-    "emoji-regex": "^9.2.2",
     "ffmpeg-static": "^4.3.0",
     "iso-639-1": "^2.1.9",
     "probe-image-size": "^7.1.1",
