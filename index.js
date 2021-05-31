@@ -62,10 +62,9 @@ const client = new CommandoClient({
     Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
     Intents.FLAGS.GUILD_BANS,
     Intents.FLAGS.DIRECT_MESSAGES,
-    // Intents.FLAGS.GUILD_MEMBERS
+    Intents.FLAGS.GUILD_VOICE_STATES,
     Intents.FLAGS.GUILD_EMOJIS,
     Intents.FLAGS.GUILD_INVITES
-    //  Intents.PRIVILEGED
   ],
   commandPrefix: prefix,
   owner: discord_owner_id
@@ -101,7 +100,7 @@ client.once('ready', () => {
     family: 'Open Sans Light'
   });
 });
-client.on('voiceStateUpdate', async (oldState, newState) => {
+client.on('voiceStateUpdate', async (___, newState) => {
   if (
     newState.member.user.bot &&
     !newState.channelID &&
@@ -120,8 +119,6 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
   ) {
     newState.setSelfDeaf(true);
   }
-  // if (!newState.channel) return; //is stage
-  // if (!oldState.channel) return; //is stage
 });
 
 client.on('guildMemberAdd', async member => {

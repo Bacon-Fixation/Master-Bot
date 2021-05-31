@@ -78,7 +78,6 @@ module.exports = class PlayCommand extends Command {
 
   async run(message, { query }) {
     // Make sure that only users present in a voice channel can use 'play'
-    console.log(message.member.voice.channel);
     if (!message.member.voice.channel) {
       message.channel.send(
         ':no_entry: Please join a voice channel and try again!',
@@ -542,6 +541,9 @@ var playSong = (queue, message) => {
           })
         )
         .on('start', function() {
+          if (message.member.voice.channel.type == 'stage') {
+            message.member.voice.channel.setTopic(queue[0].title);
+          }
           message.guild.musicData.songDispatcher = dispatcher;
           // Volume Settings
           if (!db.get(`${message.guild.id}.serverSettings.volume`)) {
