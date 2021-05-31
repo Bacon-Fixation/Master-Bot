@@ -117,6 +117,10 @@ client.on('voiceStateUpdate', async (___, newState) => {
     newState.member.user.id == client.user.id &&
     !newState.selfDeaf
   ) {
+    if (newState.channel.type == 'stage') {
+      if (newState.suppress == true) newState.setSuppressed(false);
+      if (newState.requestToSpeakTimestamp) newState.setRequestToSpeak(false);
+    }
     newState.setSelfDeaf(true);
   }
 });
