@@ -93,7 +93,9 @@ client.once('ready', () => {
     type: 'WATCHING',
     url: 'https://github.com/galnir/Master-Bot'
   });
-  const Guilds = client.guilds.cache.map(guild => guild.name);
+  const Guilds = client.guilds.cache.map(guild => {
+    return guild.name;
+  });
   console.log(Guilds, 'Connected!');
   // Registering font For Cloud Services
   Canvas.registerFont('./resources/welcome/OpenSans-Light.ttf', {
