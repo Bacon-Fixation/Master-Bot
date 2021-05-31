@@ -118,12 +118,19 @@ client.on('voiceStateUpdate', async (___, newState) => {
     newState.member.user.id == client.user.id &&
     !newState.selfDeaf
   ) {
-    if (newState.channel.type === 'stage') {
-      newState.channel.setTopic('Music Time');
+    newState.setSelfDeaf(true);
+  }
+  // Stage Channels
+  if (
+    newState.member.user.bot &&
+    newState.channelID &&
+    newState.member.user.id == client.user.id &&
+    newState.channel.type === 'stage'
+  ) {
+    if (newState.member.voice.suppress) {
       newState.member.voice.setSuppressed(false);
       newState.member.voice.setRequestToSpeak(false);
     }
-    newState.setSelfDeaf(true);
     return;
   }
 });
