@@ -107,7 +107,7 @@ client.on('voiceStateUpdate', async (___, newState) => {
     newState.guild.musicData.songDispatcher &&
     newState.member.user.id == client.user.id
   ) {
-    if (newState.member.voice.channel.topic !== 'YouTube') {
+    if (newState.member.voice.channel.topic === 'YouTube') {
       newState.member.voice.channel
         ? newState.member.voice.channel.setTopic('Session Ended')
         : newState.guild.me.voice.channel.setTopic('Session Ended');
