@@ -115,13 +115,21 @@ client.on('voiceStateUpdate', async (___, newState) => {
     newState.member.user.bot &&
     newState.channelID &&
     newState.member.user.id == client.user.id &&
+    newState.channel.type === 'stage'
+  ) {
+    newState.channel.setTopic('Music Time');
+    newState.member.voice.setSuppressed(false);
+    newState.member.voice.setRequestToSpeak(false);
+    return;
+  }
+  if (
+    newState.member.user.bot &&
+    newState.channelID &&
+    newState.member.user.id == client.user.id &&
     !newState.selfDeaf
   ) {
-    if (newState.channel.type == 'stage') {
-      if (newState.suppress == true) newState.setSuppressed(false);
-      if (newState.requestToSpeakTimestamp) newState.setRequestToSpeak(false);
-    }
     newState.setSelfDeaf(true);
+    return;
   }
 });
 

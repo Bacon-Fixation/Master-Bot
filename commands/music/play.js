@@ -542,7 +542,7 @@ var playSong = (queue, message) => {
         )
         .on('start', function() {
           if (message.member.voice.channel.type == 'stage') {
-            message.member.voice.channel.setTopic(queue[0].title);
+            message.guild.me.voice.channel.setTopic(`${queue[0].title}`);
           }
           message.guild.musicData.songDispatcher = dispatcher;
           // Volume Settings
@@ -602,6 +602,9 @@ var playSong = (queue, message) => {
                     message.guild.musicData.isPlaying == false &&
                     message.guild.me.voice.channel
                   ) {
+                    if (message.member.voice.channel.type == 'stage') {
+                      message.guild.me.voice.channel.setTopic(`Session Ended`);
+                    }
                     message.guild.me.voice.channel.leave();
                     message.channel.send(
                       ':zzz: Left channel due to inactivity.'
@@ -891,6 +894,10 @@ var interactiveEmbed = message => {
       // Stop Button
       '⏹️': function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
+
+        if (message.member.voice.channel.type == 'stage') {
+          message.guild.me.voice.channel.setTopic(`Session Ended`);
+        }
 
         instance
           .setDescription(songTitle + playbackBar(message.guild.musicData))
