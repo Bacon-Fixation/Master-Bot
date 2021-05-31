@@ -111,23 +111,18 @@ client.on('voiceStateUpdate', async (___, newState) => {
     newState.guild.musicData.songDispatcher.end();
     return;
   }
-  if (
-    newState.member.user.bot &&
-    newState.channelID &&
-    newState.member.user.id == client.user.id &&
-    newState.channel.type === 'stage'
-  ) {
-    newState.channel.setTopic('Music Time');
-    newState.member.voice.setSuppressed(false);
-    newState.member.voice.setRequestToSpeak(false);
-    return;
-  }
+
   if (
     newState.member.user.bot &&
     newState.channelID &&
     newState.member.user.id == client.user.id &&
     !newState.selfDeaf
   ) {
+    if (newState.channel.type === 'stage') {
+      newState.channel.setTopic('Music Time');
+      newState.member.voice.setSuppressed(false);
+      newState.member.voice.setRequestToSpeak(false);
+    }
     newState.setSelfDeaf(true);
     return;
   }

@@ -42,7 +42,7 @@ module.exports = class JoinCommand extends Command {
       return;
     } catch {
       message.channel.send(
-        ':x Something went wrong while attempting to move channels',
+        ':x: Something went wrong while attempting to move channels',
         { reply: { messageReference: message.id } }
       );
       return;
