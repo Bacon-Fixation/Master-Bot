@@ -1,5 +1,5 @@
 import { SapphireClient } from '@sapphire/framework';
-import { Intents } from 'discord.js';
+import { Intents, User } from 'discord.js';
 import { Node } from 'lavaclient';
 import * as data from '../config.json';
 import { embedButtons } from '../lib/utils/music/ButtonHandler';
@@ -8,6 +8,11 @@ import { manageStageChannel } from './../lib/utils/music/channelHandler';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
+  gameData: {
+    connect4Players: Map<string, User>;
+    tictactoePlayers: Map<string, User>;
+    cardsPlayers: Map<string, User>;
+  };
   leaveTimers: { [key: string]: NodeJS.Timer };
 
   public constructor() {
@@ -16,9 +21,17 @@ export class ExtendedClient extends SapphireClient {
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MEMBERS,
         Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_VOICE_STATES
+        Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.DIRECT_MESSAGES,
+        Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
       ]
     });
+
+    this.gameData = {
+      connect4Players: new Map(),
+      tictactoePlayers: new Map(),
+      cardsPlayers: new Map()
+    };
 
     this.music = new Node({
       sendGatewayPayload: (id, payload) =>
@@ -81,6 +94,11 @@ export class ExtendedClient extends SapphireClient {
 declare module '@sapphire/framework' {
   interface SapphireClient {
     readonly music: Node;
+    gameData: {
+      connect4Players: Map<string, User>;
+      tictactoePlayers: Map<string, User>;
+      cardsPlayers: Map<string, User>;
+    };
     leaveTimers: { [key: string]: NodeJS.Timer };
   }
 }
