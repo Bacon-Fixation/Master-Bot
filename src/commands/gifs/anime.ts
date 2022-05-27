@@ -15,7 +15,9 @@ import * as data from '../../config.json';
 export class AnimeCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {
     axios
-      .get(`https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=anime&limit=1`)
+      .get(
+        `https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=anime&limit=1`
+      )
       .then(async response => {
         return await interaction.reply({
           content: response.data.results[0].url
@@ -30,9 +32,9 @@ export class AnimeCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description
     });

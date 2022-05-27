@@ -16,7 +16,9 @@ import * as data from '../../config.json';
 export class GameSearchCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     if (!data.rawgAPI)
-      return await interaction.reply(':x: Command is Disabled - Missing API Key');
+      return await interaction.reply(
+        ':x: Command is Disabled - Missing API Key'
+      );
     const title = interaction.options.getString('game', true);
     const filteredTitle = this.filterTitle(title);
 
@@ -147,12 +149,12 @@ export class GameSearchCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
     if (!data.rawgAPI) {
       return console.log('Game-Search-Command - Disabled');
     } else console.log('Game-Search-Command - Enabled');
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [

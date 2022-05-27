@@ -9,7 +9,7 @@ import axios from 'axios';
 
 @ApplyOptions<CommandOptions>({
   name: 'urban',
-  description: 'Get definitions from urban dictonary',
+  description: 'Get definitions from urban dictionary',
   preconditions: ['GuildOnly']
 })
 export class UrbanCommand extends Command {
@@ -41,9 +41,9 @@ export class UrbanCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [
