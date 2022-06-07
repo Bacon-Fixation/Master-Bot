@@ -6,6 +6,7 @@ import {
 } from '@sapphire/framework';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import axios from 'axios';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'chucknorris',
@@ -31,7 +32,7 @@ export class ChuckNorrisCommand extends Command {
         return interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
-        console.error(error);
+        Logger.error(error);
         return await interaction.reply(
           ':x: An error occured, Chuck is investigating this!'
         );

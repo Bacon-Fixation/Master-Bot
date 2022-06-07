@@ -6,6 +6,7 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction, GuildMember } from 'discord.js';
 import prisma from '../../lib/prisma';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'delete-playlist',
@@ -28,7 +29,7 @@ export class DeletePlaylistCommand extends Command {
         }
       });
     } catch (error) {
-      console.error(error);
+      Logger.error(error);
       return await interaction.reply(
         ':x: Something went wrong! Please try again later'
       );

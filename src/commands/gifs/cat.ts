@@ -7,6 +7,7 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import axios from 'axios';
 import * as data from '../../config.json';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'cat',
@@ -22,7 +23,7 @@ export class CatCommand extends Command {
         });
       })
       .catch(async error => {
-        console.error(error);
+        Logger.error(error);
         return await interaction.reply(
           'Something went wrong when trying to fetch a cute kitty gif :('
         );

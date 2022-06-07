@@ -8,6 +8,7 @@ import { NowPlayingEmbed } from './../lib/utils/music/NowPlayingEmbed';
 import { manageStageChannel } from './../lib/utils/music/channelHandler';
 import { TwitchAPI } from '../lib/utils/twitch/twitchAPI';
 import { inactivityTime } from '../lib/utils/music/handleOptions';
+import Logger from '../lib/utils/logger';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
@@ -57,8 +58,8 @@ export class ExtendedClient extends SapphireClient {
       });
 
       setInterval(() => {
-        this.twitch
-          .api?.getAccessToken('user:read:email')
+        this.twitch.api
+          ?.getAccessToken('user:read:email')
           .then(response => {
             this.twitch.auth = {
               access_token: response.access_token,
@@ -69,11 +70,11 @@ export class ExtendedClient extends SapphireClient {
             };
           })
           .catch(error => {
-            console.log(error);
+            Logger.log(error);
           });
       }, 4.32e7); // refresh every 12 hours
     } else {
-      console.log('Twitch-Features are Disabled');
+      Logger.info('Twitch-Features are Disabled');
     }
 
     this.ws.on('VOICE_SERVER_UPDATE', data => {

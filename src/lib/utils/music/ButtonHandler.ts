@@ -10,6 +10,7 @@ import {
   MessageEmbed
 } from 'discord.js';
 import prisma from '../../prisma';
+import Logger from '../logger';
 
 export async function embedButtons(
   embed: MessageEmbed,
@@ -171,7 +172,7 @@ export async function embedButtons(
             clearTimeout(timer);
           });
         } catch (e) {
-          console.log(e);
+          Logger.error(e);
         }
       }
     });
@@ -191,9 +192,7 @@ export async function deletePlayerEmbed(player: Queue) {
         if (oldMessage)
           await oldMessage
             .delete()
-            .catch(error =>
-              console.log('Failed to Delete Old Message.', error)
-            );
+            .catch(error => Logger.log('Failed to Delete Old Message.', error));
         delete client.playerEmbeds[player?.player.guildId!];
       });
   }

@@ -6,6 +6,7 @@ import {
 } from '@sapphire/framework';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import axios from 'axios';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'insult',
@@ -32,7 +33,7 @@ export class InsultCommand extends Command {
         return await interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
-        console.error(error);
+        Logger.error(error);
         return await interaction.reply(
           'Something went wrong when fetching an insult :('
         );

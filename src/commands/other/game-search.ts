@@ -8,6 +8,7 @@ import type { CommandInteraction } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
 import * as data from '../../config.json';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'game-search',
@@ -16,7 +17,9 @@ import * as data from '../../config.json';
 export class GameSearchCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     if (!data.rawgAPI)
-      return await interaction.reply(':x: Command is Disabled - Missing API Key');
+      return await interaction.reply(
+        ':x: Command is Disabled - Missing API Key'
+      );
     const title = interaction.options.getString('game', true);
     const filteredTitle = this.filterTitle(title);
 
@@ -150,8 +153,9 @@ export class GameSearchCommand extends Command {
     registery: ApplicationCommandRegistry
   ): void {
     if (!data.rawgAPI) {
-      return console.log('Game-Search-Command - Disabled');
-    } else console.log('Game-Search-Command - Enabled');
+      Logger.info('Game-Search-Command - Disabled');
+      return;
+    } else Logger.info('Game-Search-Command - Enabled');
     registery.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -207,7 +211,7 @@ export class GameSearchCommand extends Command {
         }
         resolve(data);
       } catch (e) {
-        console.error(e);
+        Logger.error(e);
         reject(
           'There was a problem getting data from the API, make sure you entered a valid game title'
         );

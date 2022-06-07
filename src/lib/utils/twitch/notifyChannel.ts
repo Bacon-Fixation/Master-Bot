@@ -4,6 +4,7 @@ import { container } from '@sapphire/framework';
 import type { MessageChannel } from './../../../index';
 import prisma from '../../prisma';
 import type { Message } from 'discord.js';
+import Logger from '../logger';
 
 // Twitch ids are non changeable, usernames are not good for reference
 export async function notify(query: string[]) {
@@ -30,7 +31,7 @@ export async function notify(query: string[]) {
             gameResponse.reduce((obj, game) => gameMap.set(game.id, game), {});
           })
           .catch(async error => {
-            console.log('Failed to Get Games, refreshing Access Token', error);
+            Logger.log('Failed to Get Games, refreshing Access Token', error);
             await client.twitch.api
               .getAccessToken('user:read:email')
               .then(response => {
@@ -149,7 +150,7 @@ export async function notify(query: string[]) {
                               }
                             )
                             .catch(error =>
-                              console.log(
+                              Logger.log(
                                 'Failed to Edit Stream Notification',
                                 error
                               )
@@ -195,7 +196,7 @@ export async function notify(query: string[]) {
                         }
                       )
                       .catch(error =>
-                        console.log(
+                        Logger.log(
                           'Failed to Edit Offline Stream Notification',
                           error
                         )
@@ -215,7 +216,7 @@ export async function notify(query: string[]) {
         }
       })
       .catch(async error => {
-        console.log(
+        Logger.log(
           'Failed to Get Streaming Users, refreshing Access Token',
           error
         );

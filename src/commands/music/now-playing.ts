@@ -9,6 +9,7 @@ import { container } from '@sapphire/framework';
 import { NowPlayingEmbed } from '../../lib/utils/music/NowPlayingEmbed';
 import type { Song } from '../../lib/utils/queue/Song';
 import { embedButtons } from '../../lib/utils/music/ButtonHandler';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'now-playing',
@@ -43,7 +44,7 @@ export class NowPlayingCommand extends Command {
       })
       .then(async () => {
         await interaction.deleteReply().catch(error => {
-          console.log('Failed to Delete Reply', error);
+          Logger.error('Failed to Delete Reply', error);
         });
         await embedButtons(
           NowPlaying.NowPlayingEmbed(),

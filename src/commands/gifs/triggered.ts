@@ -7,6 +7,7 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import axios from 'axios';
 import * as data from '../../config.json';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'triggered',
@@ -15,14 +16,16 @@ import * as data from '../../config.json';
 export class TriggeredCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {
     axios
-      .get(`https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=triggered&limit=1`)
+      .get(
+        `https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=triggered&limit=1`
+      )
       .then(async response => {
         return await interaction.reply({
           content: response.data.results[0].url
         });
       })
       .catch(async error => {
-        console.error(error);
+        Logger.error(error);
         return await interaction.reply(
           'Something went wrong when trying to fetch a triggered gif :('
         );
