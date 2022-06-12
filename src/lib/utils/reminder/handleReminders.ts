@@ -150,6 +150,9 @@ export async function checkReminders() {
   });
   const { client } = container;
   reminders.forEach(async reminder => {
+    if (isPast(reminder.dateTime)) {
+      await removeReminder(reminder.userId, reminder.event, false);
+    }
     const difference = new Date(reminder.dateTime).getTime() - Date.now();
     if (!client.reminderShortTimers[`${reminder.userId}${reminder.event}`]) {
       if (difference > 0 && difference < DBReminderInterval) {
@@ -166,7 +169,10 @@ export async function checkReminders() {
         client.reminderShortTimers[`${reminder.userId}${reminder.event}`] =
           setTimeout(async () => {
             try {
-              await user?.send({ embeds: [remind.RemindEmbed()] });
+              await user?.send({
+                embeds: [remind.RemindEmbed()],
+                allowedMentions: { users: [user.id] }
+              });
             } catch (error) {
               return console.log(error);
             }
@@ -269,20 +275,35 @@ export async function checkInputs(
       if (hour != '00') {
         errorCount++;
         errors.push({
-          content: `**${errorCount}**) **Invalid Hours** - only numbers can be used to set Hours. (Example: 13:30 for 1:30 pm)`
+          content: `**${errorCount}**) **Invalid Hours** - Only numbers can be used to set Hours. (Example: 13:30 for 1:30 pm)`
         });
         Passed = false;
       }
+    }
+
+    if (Number.parseInt(hour) > 23 || Number.parseInt(hour) < 0) {
+      errorCount++;
+      errors.push({
+        content: `**${errorCount}**) **Invalid Hours** - Choose a number between 0 and 23. (Example: 13:30 for 1:30 pm)`
+      });
+      Passed = false;
     }
 
     if (!Number.parseInt(minute) || padTo2Digits(minute).length > 2) {
       if (minute != '00') {
         errorCount++;
         errors.push({
-          content: `**${errorCount}**) **Invalid Minutes** - only numbers can be used to set Minutes. (Example: 13:30 for 1:30 pm)`
+          content: `**${errorCount}**) **Invalid Minutes** - Only numbers can be used to set Minutes. (Example: 13:30 for 1:30 pm)`
         });
         Passed = false;
       }
+    }
+    if (Number.parseInt(minute) > 59 || Number.parseInt(minute) < 0) {
+      errorCount++;
+      errors.push({
+        content: `**${errorCount}**) **Invalid Minutes** - Choose a number between 0 and 59. (Example: 13:30 for 1:30 pm)`
+      });
+      Passed = false;
     }
   }
 

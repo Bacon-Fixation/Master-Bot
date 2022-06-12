@@ -15,10 +15,10 @@ import {
 } from '@sapphire/framework';
 import {
   CommandInteraction,
-  GuildMember,
   MessageActionRow,
   MessageButton,
-  MessageEmbed
+  MessageEmbed,
+  User
 } from 'discord.js';
 import {
   removeReminder,
@@ -140,11 +140,11 @@ export class ReminderCommand extends Command {
     }
 
     if (subCommand == 'view') {
-      const interactionMember = interaction.member as GuildMember;
+      const interactionUser = interaction.user as User;
 
       const reminders = await prisma.reminder.findMany({
         where: {
-          userId: interactionMember.id
+          userId: interactionUser.id
         },
         select: {
           event: true,
@@ -156,15 +156,18 @@ export class ReminderCommand extends Command {
         }
       });
       if (!reminders.length) {
-        return await interaction.reply(":x: You don't have any reminders");
+        return await interaction.reply(":x: You don't have any reminders.");
       }
-      const baseEmbed = new MessageEmbed().setColor('#9096e6').setAuthor({
-        name: `${interactionMember.user.username}`,
-        iconURL: interactionMember.user.displayAvatarURL()
-      });
+      const baseEmbed = new MessageEmbed()
+        .setColor('#9096e6')
+        .setAuthor({
+          name: `⏰ ${interactionUser.username} - Reminder List`
+          // iconURL: interactionUser.displayAvatarURL()
+        })
+        .setTimestamp();
 
       const paginatedFieldTemplate = new PaginatedFieldMessageEmbed()
-        .setTitleField('Reminders')
+        .setTitleField(``)
         .setTemplate(baseEmbed)
         .setItems(reminders)
         .formatItems(
@@ -175,11 +178,11 @@ export class ReminderCommand extends Command {
         )
         .setItemsPerPage(5)
         .make();
-      let embeds: any[] = [];
+
+      const embeds: any[] = [];
       paginatedFieldTemplate.pages.forEach((value: any) =>
         embeds.push(value.embeds)
       ); // convert to Regular Message Embed For Ephemeral Option
-      console.log(paginatedFieldTemplate.pages, embeds);
       const totalPages = paginatedFieldTemplate.pages.length;
       if (totalPages > 1) {
         const rowOne = new MessageActionRow().addComponents(
@@ -245,7 +248,7 @@ export class ReminderCommand extends Command {
         {
           type: 'SUB_COMMAND',
           name: 'set',
-          description: 'Set a reminder',
+          description: 'Set a reminder.',
           options: [
             {
               type: 'STRING',
@@ -298,12 +301,12 @@ export class ReminderCommand extends Command {
         {
           type: 'SUB_COMMAND',
           name: 'view',
-          description: 'Show your reminders'
+          description: 'Show your reminders.'
         },
         {
           type: 'SUB_COMMAND',
           name: 'remove',
-          description: 'Delete a reminder from you list',
+          description: 'Delete a reminder from you list.',
           options: [
             {
               type: 'STRING',
@@ -316,7 +319,7 @@ export class ReminderCommand extends Command {
         {
           type: 'SUB_COMMAND',
           name: 'save-timezone',
-          description: 'Save your timezone'
+          description: 'Save your timezone.'
         }
       ]
     });

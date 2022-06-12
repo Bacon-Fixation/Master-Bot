@@ -35,13 +35,10 @@ export class RemindEmbed {
           this.event.charAt(0).toUpperCase() + this.event.slice(1).toLowerCase()
         }`
       )
-      // kinda redundant
-      // .addField(
-      //   'Alarm',
-      //   `> <t:${Math.floor(new Date(this.dateTime).valueOf() / 1000)}>`,
-      //   true
-      // )
-      .setFooter({ text: 'Reminder' })
+      .setFooter({
+        iconURL: user?.displayAvatarURL(),
+        text: user?.username!
+      })
       .setTimestamp();
 
     if (this.repeat) {
@@ -62,11 +59,6 @@ export class RemindEmbed {
     if (this.description)
       if (this.description.length > 0)
         baseEmbed.setDescription(`> ${this.description}`);
-    if (user)
-      baseEmbed.setAuthor({
-        iconURL: user?.displayAvatarURL(),
-        name: user?.username
-      });
     return baseEmbed;
   }
 }

@@ -44,9 +44,9 @@ model Playlist {
 }
 
 model Guild {
-  id     String   @id
-  added  DateTime @default(now())
-  volume Int
+  id         String   @id
+  added      DateTime @default(now())
+  volume     Int
   notifyList String[]
 }
 
@@ -57,7 +57,6 @@ model TwitchNotify {
   channelIds String[]
   sent       Boolean
 }
-
 
 model Reminder {
   id          Int      @id @default(autoincrement())
