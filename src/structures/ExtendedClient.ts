@@ -20,6 +20,7 @@ export class ExtendedClient extends SapphireClient {
     },
     notifyList: {}
   };
+  reminderShortTimers: { [key: string]: NodeJS.Timer };
 
   public constructor() {
     super({
@@ -42,6 +43,7 @@ export class ExtendedClient extends SapphireClient {
         secure: data.lava_secure
       }
     });
+
     this.ws.on('VOICE_SERVER_UPDATE', async data => {
       // handle if a mod right-clicks disconnect on the bot
       if (!data.channel_id && data.user_id === this.application?.id) {
@@ -86,6 +88,7 @@ export class ExtendedClient extends SapphireClient {
     }
 
     this.leaveTimers = {};
+    this.reminderShortTimers = {};
   }
 }
 
@@ -94,5 +97,6 @@ declare module '@sapphire/framework' {
     readonly music: QueueClient;
     leaveTimers: { [key: string]: NodeJS.Timer };
     twitch: ClientTwitchExtension;
+    reminderShortTimers: { [key: string]: NodeJS.Timer };
   }
 }
