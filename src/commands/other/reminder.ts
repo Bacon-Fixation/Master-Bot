@@ -67,12 +67,14 @@ export class ReminderCommand extends Command {
         )
       ) {
         const isoStr = convertInputsToISO(userDB.timeZone, timeQuery, date!);
+
         if (isPast(isoStr)) {
           return await interaction.reply({
             content: `:x: I can't go back in time`,
             ephemeral: true
           });
         }
+
         let stop = false;
         const saveToDB = await saveReminder(interaction.user.id, {
           event: newEvent,
@@ -162,7 +164,6 @@ export class ReminderCommand extends Command {
         .setColor('#9096e6')
         .setAuthor({
           name: `⏰ ${interactionUser.username} - Reminder List`
-          // iconURL: interactionUser.displayAvatarURL()
         })
         .setTimestamp();
 

@@ -15,7 +15,7 @@ import {
   TextInputComponent
 } from 'discord.js';
 
-export const DBReminderInterval = 60000 * 10; // longer timers
+export const DBReminderInterval = 60000 * 30; // longer timers
 
 export async function saveReminder(userId: string, reminder: Reminder) {
   try {
@@ -44,20 +44,19 @@ export function convertInputsToISO(
   date: string
 ) {
   let isoStr: string = '';
-  const operator = userOffset! > 0 ? '+' : '-';
-  let [hour, minute] = timeQuery.split(':');
+  const userOperator = userOffset! > 0 ? '+' : '-';
+  const [hour, minute] = timeQuery.split(':');
   timeQuery = `${padTo2Digits(hour)}:${padTo2Digits(minute)}`;
 
-  const currentDate = new Date();
-  const localOffset = currentDate.getTimezoneOffset() * 60000;
-  let subtractTime = false;
+  const localDateTime = new Date();
+  const localOffset = localDateTime.getTimezoneOffset();
+  const localOperator = localOffset > 0 ? '+' : '-';
 
-  if (currentDate.getTimezoneOffset() < 0) subtractTime = true;
   const DateEntry = date ? true : false;
   if (!date) {
     date = `${
-      currentDate.getMonth() + 1
-    }/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+      localDateTime.getMonth() + 1
+    }/${localDateTime.getDate()}/${localDateTime.getFullYear()}`;
   }
   const [month, day, year] = date.split('/') || date.split('-');
   isoStr = `${year}-${padTo2Digits(month)}-${padTo2Digits(
@@ -69,20 +68,19 @@ export function convertInputsToISO(
   }
 
   const timeMS = new Date(isoStr).valueOf();
-  const minToMS = userOffset! * 60000;
-  const totalOffset = localOffset - (subtractTime ? -minToMS : +minToMS);
+  const userMinToMS = userOffset! * 60000;
+  const localMinToMS = localOffset * 60000;
+  const totalOffset =
+    localOperator === '+'
+      ? localMinToMS - (userOperator === '-' ? -userMinToMS : +userMinToMS)
+      : localMinToMS + (userOperator === '-' ? -userMinToMS : +userMinToMS);
 
-  isoStr = new Date(
-    operator == '+' ? timeMS + totalOffset : timeMS - totalOffset
-  )
-    .toISOString()
-    .replace('Z', '');
+  isoStr = new Date(timeMS + totalOffset).toISOString().replace('Z', '');
   return isoStr;
 }
 
 export function isPast(dateTime: string) {
-  const now = Date.now();
-  return new Date(dateTime).getTime() - now < 0 ? true : false;
+  return new Date(dateTime).getTime() - Date.now() < 0 ? true : false;
 }
 
 export async function findTimeZone(
@@ -91,19 +89,19 @@ export async function findTimeZone(
   date: string
 ) {
   if (await checkInputs(interaction, 'placeholder', timeQuery, date)) {
-    const currentDate = new Date(Date.now()); // timezones
+    const localDateTime = new Date();
     let [hour, minute] = timeQuery.split(':');
 
     timeQuery = `${padTo2Digits(hour)}:${padTo2Digits(minute)}`;
 
-    let userTime: string = currentDate.toISOString();
+    let userTime: string = localDateTime.toISOString();
 
     const [month, day, year] = date.split('/') || date.split('-');
     userTime = `${year}-${padTo2Digits(month)}-${padTo2Digits(
       day
     )}T${timeQuery}:00.000Z`;
     const userTimeMS = new Date(userTime).valueOf();
-    const totalOffset = currentDate.getTime() - userTimeMS;
+    const totalOffset = localDateTime.getTime() - userTimeMS;
 
     await prisma.user.update({
       data: { timeZone: Math.floor(totalOffset / 60000) },
@@ -127,14 +125,14 @@ export async function removeReminder(
     });
   } catch (error) {
     console.error(error);
-    if (isCommand) return ':x: Something went wrong! Please try again later';
+    if (isCommand) return ':x: Something went wrong! Please try again later.';
   }
 
   if (deleted?.count! > 0 && isCommand)
     return `:wastebasket: Deleted reminder **${event}**.`;
   else if (isCommand) return `:x: **${event}** was not found.`;
 
-  return ':x: Something went wrong! Please try again later';
+  return ':x: Something went wrong! Please try again later.';
 }
 export async function checkReminders() {
   const reminders = await prisma.reminder.findMany({
@@ -152,6 +150,7 @@ export async function checkReminders() {
   reminders.forEach(async reminder => {
     if (isPast(reminder.dateTime)) {
       await removeReminder(reminder.userId, reminder.event, false);
+      return;
     }
     const difference = new Date(reminder.dateTime).getTime() - Date.now();
     if (!client.reminderShortTimers[`${reminder.userId}${reminder.event}`]) {
@@ -208,22 +207,22 @@ export async function checkReminders() {
 
 export function nextReminder(repeat: string, isoStr: string) {
   const localOffset = new Date().getTimezoneOffset();
-  const operator = localOffset > 0 ? '+' : '-';
+  const localOperator = localOffset > 0 ? '+' : '-';
   const offset2MS = localOffset * 60000;
-  if (repeat == 'Daily') {
+  if (repeat === 'Daily') {
     isoStr = new Date(
       new Date(isoStr).valueOf() +
         86400 * 1000 -
-        (operator == '+' ? +offset2MS : -offset2MS)
+        (localOperator === '+' ? +offset2MS : -offset2MS)
     )
       .toISOString()
       .replace('Z', '');
   }
-  if (repeat == 'Weekly') {
+  if (repeat === 'Weekly') {
     isoStr = new Date(
       new Date(isoStr).valueOf() +
         604800 * 1000 -
-        (operator == '+' ? +offset2MS : -offset2MS)
+        (localOperator === '+' ? +offset2MS : -offset2MS)
     )
       .toISOString()
       .replace('Z', '');
@@ -238,11 +237,11 @@ export function nextReminder(repeat: string, isoStr: string) {
   let hour = Number.parseInt(DBHour);
   let minute = Number.parseInt(DBMinute);
 
-  if (repeat == 'Yearly') {
+  if (repeat === 'Yearly') {
     year++;
   }
 
-  if (repeat == 'Monthly') {
+  if (repeat === 'Monthly') {
     month + 1 > 12 ? ((month = 1), year++) : month++;
   }
 
@@ -269,10 +268,10 @@ export async function checkInputs(
   let errorCount = 0;
 
   if (time) {
-    let [hour, minute] = time.split(':');
+    const [hour, minute] = time.split(':');
 
     if (!Number.parseInt(hour) || padTo2Digits(hour).length > 2) {
-      if (hour != '00') {
+      if (hour !== '00') {
         errorCount++;
         errors.push({
           content: `**${errorCount}**) **Invalid Hours** - Only numbers can be used to set Hours. (Example: 13:30 for 1:30 pm)`
@@ -290,7 +289,7 @@ export async function checkInputs(
     }
 
     if (!Number.parseInt(minute) || padTo2Digits(minute).length > 2) {
-      if (minute != '00') {
+      if (minute !== '00') {
         errorCount++;
         errors.push({
           content: `**${errorCount}**) **Invalid Minutes** - Only numbers can be used to set Minutes. (Example: 13:30 for 1:30 pm)`
@@ -317,12 +316,16 @@ export async function checkInputs(
     ) {
       errorCount++;
       errors.push({
-        content: `**${errorCount}**) **Invalid Date** - only numbers can be used to set the Date`
+        content: `**${errorCount}**) **Invalid Date** - Only numbers can be used to set the Date`
       });
       Passed = false;
     }
 
-    if (Number.parseInt(month) > 12 || year.length != 4) {
+    if (
+      Number.parseInt(month) > 12 ||
+      year.length !== 4 ||
+      Number.parseInt(day) > 31
+    ) {
       errorCount++;
       errors.push({
         content: `**${errorCount}**) **Invalid Syntax** - Date is formatted MM/DD/YYYY`
@@ -331,7 +334,7 @@ export async function checkInputs(
     }
 
     if (repeat) {
-      if (repeat == 'Monthly' && Number.parseInt(day) > 28) {
+      if (repeat === 'Monthly' && Number.parseInt(day) > 28) {
         errorCount++;
         errors.push({
           content: `**${errorCount}**) **Invalid Setting Combo** - Day cannot be after the 28th with "Monthly" Repeat setting enabled. (Blame February <3)`
@@ -423,7 +426,7 @@ export async function askForDateTime(interaction: CommandInteraction) {
     await findTimeZone(interaction, timeInput, dateInput);
 
     await submission.reply({
-      content: 'Your Time Zone Offset has been saved',
+      content: 'Your Time Zone Offset has been saved.',
       ephemeral: true
     });
   }
