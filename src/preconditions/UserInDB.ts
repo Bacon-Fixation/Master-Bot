@@ -14,7 +14,7 @@ export class UserInDB extends Precondition {
   public override async chatInputRun(
     interaction: CommandInteraction
   ): AsyncPreconditionResult {
-    const user = interaction.user as User;
+    const user = interaction.user as User; // User allows for DMs
 
     try {
       await prisma.user.upsert({

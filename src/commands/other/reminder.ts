@@ -3,15 +3,15 @@ import {
   checkInputs,
   convertInputsToISO,
   DBReminderInterval,
-  isPast
+  isPast,
+  reminderShortTimers
 } from './../../lib/utils/reminder/handleReminders';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
   Command,
-  CommandOptions,
-  container
+  CommandOptions
 } from '@sapphire/framework';
 import {
   CommandInteraction,
@@ -35,7 +35,6 @@ import { RemindEmbed } from '../../lib/utils/reminder/reminderEmbed';
 export class ReminderCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const subCommand = interaction.options.getSubcommand(true);
-    const { client } = container;
 
     if (subCommand == 'save-timezone') {
       return await askForDateTime(interaction);
@@ -110,7 +109,7 @@ export class ReminderCommand extends Command {
               newDescription!,
               repeat!
             );
-            client.reminderShortTimers[`${interaction.user.id}${newEvent}`] =
+            reminderShortTimers[`${interaction.user.id}${newEvent}`] =
               setTimeout(async () => {
                 try {
                   await interaction.user?.send({
@@ -122,9 +121,7 @@ export class ReminderCommand extends Command {
 
                 await removeReminder(interaction.user.id, newEvent, false);
                 clearTimeout(
-                  client.reminderShortTimers[
-                    `${interaction.user.id}${newEvent}`
-                  ]
+                  reminderShortTimers[`${interaction.user.id}${newEvent}`]
                 );
                 return;
               }, difference);

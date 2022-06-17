@@ -14,8 +14,10 @@ import {
   ModalSubmitInteraction,
   TextInputComponent
 } from 'discord.js';
+import { Time } from '@sapphire/time-utilities';
 
-export const DBReminderInterval = 60000 * 30; // longer timers
+export const DBReminderInterval = Time.Minute * 30; // longer timers
+export const reminderShortTimers: { [key: string]: NodeJS.Timer } = {};
 
 export async function saveReminder(userId: string, reminder: Reminder) {
   try {
@@ -29,12 +31,12 @@ export async function saveReminder(userId: string, reminder: Reminder) {
       }
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return `:x: You already have an event named **${reminder.event}**`;
   }
 
   return `✅ Reminder - **${reminder.event}** has been set for <t:${Math.floor(
-    new Date(reminder.dateTime).valueOf() / 1000
+    new Date(reminder.dateTime).valueOf() / Time.Second
   )}> ${reminder.repeat ? ', Repeating ' + reminder.repeat : ''}`;
 }
 
@@ -64,17 +66,26 @@ export function convertInputsToISO(
   )}T${timeQuery}:00.000Z`;
 
   if (isPast(isoStr.replace('Z', '')) && !DateEntry) {
-    isoStr = new Date(new Date(isoStr).getTime() + 86400000).toISOString();
+    isoStr = new Date(new Date(isoStr).getTime() + Time.Day).toISOString();
   }
 
   const timeMS = new Date(isoStr).valueOf();
-  const userMinToMS = userOffset! * 60000;
-  const localMinToMS = localOffset * 60000;
-  const totalOffset =
-    localOperator === '+'
-      ? localMinToMS - (userOperator === '-' ? -userMinToMS : +userMinToMS)
-      : localMinToMS + (userOperator === '-' ? -userMinToMS : +userMinToMS);
+  const userMinToMS = userOffset! * Time.Minute;
+  const localMinToMS = localOffset * Time.Minute;
 
+  const totalOffset =
+    localOperator == '+'
+      ? localMinToMS - (userOperator == '-' ? -userMinToMS : +userMinToMS)
+      : localMinToMS + (userOperator == '+' ? -userMinToMS : +userMinToMS);
+  // console.log(
+  //   `User Time Zone Offset: ${
+  //     userOperator == '-' ? 'Negative' : 'Positive'
+  //   } ${userMinToMS}`,
+  //   `Local Time Zone Offset: ${
+  //     localOperator == '-' ? 'Negative' : 'Positive'
+  //   } ${localMinToMS}`,
+  //   `Combined Offset: ${totalOffset}`
+  // );
   isoStr = new Date(timeMS + totalOffset).toISOString().replace('Z', '');
   return isoStr;
 }
@@ -104,7 +115,7 @@ export async function findTimeZone(
     const totalOffset = localDateTime.getTime() - userTimeMS;
 
     await prisma.user.update({
-      data: { timeZone: Math.floor(totalOffset / 60000) },
+      data: { timeZone: Math.floor(totalOffset / Time.Minute) },
       select: { timeZone: true },
       where: { id: interaction.user.id }
     });
@@ -153,7 +164,7 @@ export async function checkReminders() {
       return;
     }
     const difference = new Date(reminder.dateTime).getTime() - Date.now();
-    if (!client.reminderShortTimers[`${reminder.userId}${reminder.event}`]) {
+    if (!reminderShortTimers[`${reminder.userId}${reminder.event}`]) {
       if (difference > 0 && difference < DBReminderInterval) {
         const user = client.users.cache.get(reminder.userId!);
         const remind = new RemindEmbed(
@@ -165,8 +176,8 @@ export async function checkReminders() {
           reminder.repeat!
         );
 
-        client.reminderShortTimers[`${reminder.userId}${reminder.event}`] =
-          setTimeout(async () => {
+        reminderShortTimers[`${reminder.userId}${reminder.event}`] = setTimeout(
+          async () => {
             try {
               await user?.send({
                 embeds: [remind.RemindEmbed()],
@@ -195,11 +206,13 @@ export async function checkReminders() {
             }
 
             clearTimeout(
-              client.reminderShortTimers[`${reminder.userId}${reminder.event}`]
+              reminderShortTimers[`${reminder.userId}${reminder.event}`]
             );
             return;
-          }, difference);
-        client.reminderShortTimers[`${reminder.userId}${reminder.event}`];
+          },
+          difference
+        );
+        reminderShortTimers[`${reminder.userId}${reminder.event}`];
       }
     }
   });
@@ -208,11 +221,12 @@ export async function checkReminders() {
 export function nextReminder(repeat: string, isoStr: string) {
   const localOffset = new Date().getTimezoneOffset();
   const localOperator = localOffset > 0 ? '+' : '-';
+
   const offset2MS = localOffset * 60000;
   if (repeat === 'Daily') {
     isoStr = new Date(
       new Date(isoStr).valueOf() +
-        86400 * 1000 -
+        Time.Day -
         (localOperator === '+' ? +offset2MS : -offset2MS)
     )
       .toISOString()
