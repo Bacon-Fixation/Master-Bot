@@ -70,7 +70,7 @@ export class NowPlayingEmbed {
         sourceTxt = 'YouTube';
         sourceIcon =
           'https://www.youtube.com/s/desktop/acce624e/img/favicon_32x32.png';
-        embedColor = '#ff0000';
+        embedColor = '#FF0000';
         break;
       }
 
@@ -119,11 +119,13 @@ export class NowPlayingEmbed {
         )
         .addField('Next', `[${this.queue[0].title}](${this.queue[0].uri})`);
     }
-    if (this.last) {
-      baseEmbed.addField('Previous', `[${this.last.title}](${this.last.uri})`);
-    }
+
     // song just started embed
-    if (this.position == undefined) {
+    if (
+      this.position == undefined ||
+      !this.track.isSeekable ||
+      this.track.isStream
+    ) {
       return baseEmbed;
     }
     const bar = progressbar.splitBar(this.length, this.position, 22)[0];

@@ -2,11 +2,13 @@
   "extends": "@sapphire/ts-config",
   "compilerOptions": {
     "rootDir": "src",
+    "incremental": true,
     "outDir": "dist",
     "tsBuildInfoFile": "dist/.tsbuildinfo",
     "resolveJsonModule": true,
     "noUnusedParameters": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src"]
+  "include": ["src", "scripts"]
 }

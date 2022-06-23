@@ -1,25 +1,33 @@
 import type { Queue } from './../queue/Queue';
-import type { GuildMember, StageChannel } from 'discord.js';
+import type { AnyChannel, GuildMember } from 'discord.js';
 
 export async function manageStageChannel(
-  voiceChannel: StageChannel,
+  voiceChannel: AnyChannel,
   botUser: GuildMember,
   instance: Queue
 ) {
+  if (voiceChannel.type !== 'GUILD_STAGE_VOICE') return;
   // Stage Channel Permissions From Discord.js Doc's
   if (
     !botUser?.permissions.has(
       ('MANAGE_CHANNELS' && 'MUTE_MEMBERS' && 'MOVE_MEMBERS') || 'ADMINISTRATOR'
     )
   )
-    return await instance.channel?.send({
-      content: `:interrobang: Please make promote me to a Speaker in ${voiceChannel.name}, Missing permissions "Administrator" ***OR*** "Manage Channels, Mute Members, and Move Members" for Full Stage Channel Features.`
-    });
-
+    if (botUser.voice.suppress)
+      return await instance.getTextChannel().then(
+        async msg =>
+          await msg?.send({
+            content: `:interrobang: Please make promote me to a Speaker in ${voiceChannel.name}, Missing permissions "Administrator" ***OR*** "Manage Channels, Mute Members, and Move Members" for Full Stage Channel Features.`
+          })
+      );
+  const tracks = await instance.tracks();
   const title =
-    instance.player.queue.current?.title.length! > 114
-      ? `🎶 ${instance.player.queue.current?.title.slice(0, 114)}...`
-      : `🎶 ${instance.player.queue.current?.title}`;
+    instance.player.trackData?.title.length! > 114
+      ? `🎶 ${
+          instance.player.trackData?.title.slice(0, 114) ??
+          tracks.at(0)?.title.slice(0, 114)
+        }...`
+      : `🎶 ${instance.player.trackData?.title ?? tracks.at(0)?.title}`;
 
   if (!voiceChannel.stageInstance) {
     await voiceChannel

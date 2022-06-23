@@ -10,11 +10,10 @@ import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 
 @ApplyOptions<CommandOptions>({
   name: 'queue',
-  description: 'Display the music queue in the form of an embed',
+  description: 'Get a List of the Music Queue',
   preconditions: [
     'GuildOnly',
     'inVoiceChannel',
-    'musicTriviaPlaying',
     'playerIsPlaying',
     'inPlayerVoiceChannel'
   ]
@@ -22,37 +21,20 @@ import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 export class QueueCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const { client } = container;
-
-    const player = client.music.players.get(interaction.guild!.id);
-
-    const queueLength = player!.queue.tracks.length;
-    if (!queueLength) {
-      return await interaction.reply(':x: There are no songs in the queue!');
-    }
-
-    const queueItems = [];
-    for (let i = 0; i < queueLength; i++) {
-      queueItems.push({
-        title: `${i + 1}`,
-        value: player!.queue.tracks[i].title
-      });
-    }
-
-    const user = interaction.user;
-
-    const baseEmbed = new MessageEmbed()
-      .setTitle('Music Queue')
-      .setColor('#9096e6')
-      .setAuthor({
-        name: user.username,
-        iconURL: user.displayAvatarURL()
-      });
-
+    const queue = client.music.queues.get(interaction.guildId!);
+    const baseEmbed = new MessageEmbed().setColor('#FF0000').setAuthor({
+      name: `${interaction.user.username}`,
+      iconURL: interaction.user.displayAvatarURL()
+    });
+    let index = 1;
     new PaginatedFieldMessageEmbed()
-      .setTitleField('Queue items')
+      .setTitleField('Queue')
       .setTemplate(baseEmbed)
-      .setItems(queueItems)
-      .formatItems((item: any) => `**${item.title}**: ${item.value}`)
+      .setItems(await queue.tracks())
+      .formatItems(
+        (queueList: any) =>
+          `${index++}) ***[${queueList.title}](${queueList.uri})***`
+      )
       .setItemsPerPage(10)
       .make()
       .run(interaction);
