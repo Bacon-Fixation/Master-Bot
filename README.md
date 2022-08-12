@@ -98,7 +98,11 @@ For full command support, including lyrics, GIFs, news, and others, - (which som
   "newsAPI": "news-api-key",
   "rawgAPI": "rawg-api-key",
   "twitchClientID": "twitch-client-id",
-  "twitchClientSecret": "twitch-client-secret"
+  "twitchClientSecret": "twitch-client-secret",
+  "redis_host": "localhost",
+  "redis_port": 6379,
+  "redis_password": "",
+  "redis_db": 0
 }
 ```
 
@@ -178,7 +182,6 @@ A full list of commands for use with Master Bot
 | /amongus   | Get a random Among Us gif  | /amongus   |
 
 ## Other
-
 
 | Command           | Description                                                                                                                                                        | Usage                                   |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------- |
