@@ -19,7 +19,8 @@
 		"lint:fix": "turbo lint:fix && manypkg fix",
 		"type-check": "turbo type-check",
 		"postinstall": "pnpm db:push",
-		"docker-compose": "docker compose --env-file docker.env up -d --build"
+		"docker-compose": "docker compose --env-file docker.env -f docker-compose.yml up -d --build",
+		"docker-compose-clean": "docker compose --env-file docker.env -f docker-compose.yml down && pnpm run docker-compose "
 	},
 	"dependencies": {
 		"@ianvs/prettier-plugin-sort-imports": "^4.1.0",
