@@ -1,5 +1,5 @@
 # Nextjs Files
-.next
+/.next
 
 # Docker Files
 Dockerfile
@@ -15,12 +15,13 @@ LICENSE
 README.md
 
 # Typescript
-tsconfig.tsbuildinfo
+*.tsbuildinfo
+
 
 # Node Modules and lint settings
-node_modules
+/node_modules
 .prettierrc
-dist
+/dist
 logs
 Lavalink.jar
 application.yml

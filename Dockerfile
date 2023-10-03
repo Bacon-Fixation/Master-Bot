@@ -1,22 +1,32 @@
-FROM --platform=linux/amd64 node:18-slim
+# syntax=docker/dockerfile:1
+FROM --platform=linux/amd64 node:18 AS core
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV NEXT_TELEMETRY_DISABLED 1
 WORKDIR "/Master-Bot"
-
+RUN npm install -g pnpm
 # Copy files to Container (Excluding whats in .dockerignore)
-COPY ./ ./
+COPY . .
 
 # Ports for the Dashboard  
 EXPOSE 3000
 ENV PORT 3000
 
-# Install prerequisites and register fonts
-RUN apt-get update && apt-get upgrade -y -q && \
-    apt-get install -y -q openssl && \
-    apt-get install -y -q --no-install-recommends libfontconfig1 && \ 
-    npm install -g pnpm && \
-    pnpm install --ignore-scripts && pnpm -F * build
+FROM core as apt
+RUN apt-get update && apt-get upgrade -y -q
+RUN apt-get install -y -q openssl
+RUN apt-get install -y -q --no-install-recommends libfontconfig1
+
+FROM core as deps
+COPY --from=apt . ../
+RUN pnpm install sharp -w
+RUN pnpm install --ignore-scripts
+
+
+FROM deps as builder
+COPY --from=deps . .
+RUN pnpx turbo build
+
 
 # If you are running Master-Bot in a Standalone Container and need to connect to a service on localhost uncomment the following ENV for each service running on the containers host
 # ENV POSTGRES_HOST="host.docker.internal"
@@ -24,5 +34,6 @@ RUN apt-get update && apt-get upgrade -y -q && \
 # ENV LAVA_HOST="host.docker.internal"
 
 # Uncomment the following for Standalone Master-Bot Docker Container Build
+# FROM core as runner
 # RUN pnpm db:push
 # CMD ["pnpm", "-r", "start"]
