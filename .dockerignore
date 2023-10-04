@@ -1,5 +1,5 @@
 # Nextjs Files
-/.next
+.next
 
 # Docker Files
 Dockerfile
@@ -14,16 +14,13 @@ docker-compose.yaml
 LICENSE
 README.md
 
-# Typescript
-*.tsbuildinfo
-
 
 # Node Modules and lint settings
-/node_modules
+node_modules
 .prettierrc
-/dist
+dist
 logs
 Lavalink.jar
 application.yml
 application.yaml
-.turbo
+tsconfig.tsbuildinfo
