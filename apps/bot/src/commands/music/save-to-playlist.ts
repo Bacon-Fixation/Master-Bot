@@ -46,7 +46,7 @@ export class SaveToPlaylistCommand extends Command {
 		const playlistName = interaction.options.getString('playlist-name', true);
 		const url = interaction.options.getString('url', true);
 
-		const interactionMember = interaction.member?.user;
+		const interactionMember = interaction.user;
 
 		if (!interactionMember) {
 			return await interaction.followUp(
@@ -58,7 +58,7 @@ export class SaveToPlaylistCommand extends Command {
 			name: playlistName,
 			userId: interactionMember.id
 		});
-
+		console.log(playlistName, interactionMember.id);
 		if (!playlistQuery.playlist) {
 			return await interaction.followUp('Playlist does not exist');
 		}
@@ -74,8 +74,9 @@ export class SaveToPlaylistCommand extends Command {
 		const songsToAdd: any[] = [];
 
 		for (let i = 0; i < songArray.length; i++) {
-			const song = songArray[i];
+			let song = songArray[i];
 			delete song['requester'];
+			delete song['added'];
 			songsToAdd.push({
 				...song,
 				playlistId: +playlistId

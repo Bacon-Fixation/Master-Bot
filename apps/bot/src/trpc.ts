@@ -1,9 +1,8 @@
+// @ts-nocheck
 import type { AppRouter } from '@master-bot/api/index';
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
-// @ts-ignore
 import * as trpcServer from '@trpc/server';
-// @ts-ignore
 import * as PrismaClient from '@prisma/client';
 const _importDynamic = new Function('modulePath', 'return import(modulePath)');
 

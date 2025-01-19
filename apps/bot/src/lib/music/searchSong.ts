@@ -19,12 +19,16 @@ export default async function searchSong(
 			case SpotifyItemType.Track:
 				const track = await item.resolveYoutubeTrack();
 				tracks = [
-					new Song(track, Date.now(), {
-						avatar,
-						defaultAvatarURL,
-						id,
-						name: displayName
-					})
+					new Song(
+						track,
+						{
+							avatar,
+							defaultAvatarURL,
+							id,
+							displayName
+						},
+						Date.now()
+					)
 				];
 				displayMessage = `Queued track [**${item.name}**](${query}).`;
 				break;
@@ -32,12 +36,16 @@ export default async function searchSong(
 				response = await item.resolveYoutubeTracks();
 				response.forEach(track =>
 					tracks.push(
-						new Song(track, Date.now(), {
-							avatar,
-							defaultAvatarURL,
-							id,
-							name: displayName
-						})
+						new Song(
+							track,
+							{
+								avatar,
+								defaultAvatarURL,
+								id,
+								displayName
+							},
+							Date.now()
+						)
 					)
 				);
 				displayMessage = `Queued the **Top ${tracks.length} tracks** for [**${item.name}**](${query}).`;
@@ -47,12 +55,16 @@ export default async function searchSong(
 				response = await item.resolveYoutubeTracks();
 				response.forEach(track =>
 					tracks.push(
-						new Song(track, Date.now(), {
-							avatar,
-							defaultAvatarURL,
-							id,
-							name: displayName
-						})
+						new Song(
+							track,
+							{
+								avatar,
+								defaultAvatarURL,
+								id,
+								displayName
+							},
+							Date.now()
+						)
 					)
 				);
 				displayMessage = `Queued **${
@@ -79,12 +91,16 @@ export default async function searchSong(
 			case 'PLAYLIST_LOADED':
 				results.tracks.forEach((track: any) =>
 					tracks.push(
-						new Song(track, Date.now(), {
-							avatar,
-							defaultAvatarURL,
-							id,
-							name: displayName
-						})
+						new Song(
+							track,
+							{
+								avatar,
+								defaultAvatarURL,
+								id,
+								displayName
+							},
+							Date.now()
+						)
 					)
 				);
 				displayMessage = `Queued playlist [**${results.playlistInfo.name}**](${query}), it has a total of **${tracks.length}** tracks.`;
@@ -93,12 +109,16 @@ export default async function searchSong(
 			case 'SEARCH_RESULT':
 				const [track] = results.tracks;
 				tracks = [
-					new Song(track, Date.now(), {
-						avatar,
-						defaultAvatarURL,
-						id,
-						name: displayName
-					})
+					new Song(
+						track,
+						{
+							avatar,
+							defaultAvatarURL,
+							id,
+							displayName
+						},
+						Date.now()
+					)
 				];
 				displayMessage = `Queued [**${track.info.title}**](${track.info.uri})`;
 				break;

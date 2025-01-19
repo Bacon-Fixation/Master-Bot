@@ -35,7 +35,7 @@ export class CreatePlaylistCommand extends Command {
 	) {
 		const playlistName = interaction.options.getString('playlist-name', true);
 
-		const interactionMember = interaction.member?.user;
+		const interactionMember = interaction.user;
 
 		if (!interactionMember) {
 			return await interaction.reply({
@@ -54,6 +54,7 @@ export class CreatePlaylistCommand extends Command {
 			await interaction.reply({
 				content: `:x: You already have a playlist named **${playlistName}**`
 			});
+			console.log('Error ', error);
 			return;
 		}
 

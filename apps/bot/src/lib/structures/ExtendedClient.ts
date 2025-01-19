@@ -16,6 +16,7 @@ import Logger from '../logger';
 
 export class ExtendedClient extends SapphireClient {
 	readonly music: QueueClient;
+	redis: Redis;
 	leaveTimers: { [key: string]: NodeJS.Timeout };
 	twitch: ClientTwitchExtension = {
 		api: new TwitchAPI(
@@ -46,17 +47,17 @@ export class ExtendedClient extends SapphireClient {
 				enabled: process.env.NODE_ENV === 'development'
 			}
 		});
-
+		this.redis = new Redis({
+			host: process.env.REDIS_HOST || 'localhost',
+			port: Number.parseInt(process.env.REDIS_PORT!) || 6379,
+			password: process.env.REDIS_PASSWORD || '',
+			db: Number.parseInt(process.env.REDIS_DB!) || 0
+		});
 		this.music = new QueueClient({
 			sendGatewayPayload: (id, payload) =>
 				this.guilds.cache.get(id)?.shard?.send(payload),
 			options: {
-				redis: new Redis({
-					host: process.env.REDIS_HOST || 'localhost',
-					port: Number.parseInt(process.env.REDIS_PORT!) || 6379,
-					password: process.env.REDIS_PASSWORD || '',
-					db: Number.parseInt(process.env.REDIS_DB!) || 0
-				})
+				redis: this.redis
 			},
 			connection: {
 				host: process.env.LAVA_HOST || '',

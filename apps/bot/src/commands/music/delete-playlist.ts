@@ -37,9 +37,9 @@ export class DeletePlaylistCommand extends Command {
 	) {
 		const playlistName = interaction.options.getString('playlist-name', true);
 
-		const interactionMember = interaction.member?.user;
+		const interactionUser = interaction.user;
 
-		if (!interactionMember) {
+		if (!interactionUser) {
 			return await interaction.reply(
 				':x: Something went wrong! Please try again later'
 			);
@@ -48,7 +48,7 @@ export class DeletePlaylistCommand extends Command {
 		try {
 			const playlist = await trpcNode.playlist.delete.mutate({
 				name: playlistName,
-				userId: interactionMember.id
+				userId: interactionUser.id
 			});
 
 			if (!playlist) throw new Error();

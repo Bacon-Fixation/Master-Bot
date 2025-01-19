@@ -12,10 +12,10 @@ export const playlistRouter = createTRPCRouter({
 		)
 		.query(async ({ ctx, input }) => {
 			const { userId, name } = input;
-
+			console.log(userId, name);
 			const playlist = await ctx.prisma.playlist.findFirst({
 				where: {
-					userId,
+					userId: userId,
 					name
 				},
 				include: {
@@ -63,7 +63,7 @@ export const playlistRouter = createTRPCRouter({
 					name,
 					user: {
 						connect: {
-							id: userId
+							discordId: userId
 						}
 					}
 				}

@@ -10,6 +10,7 @@
 
 # Testing
 /coverage
+.history
 
 # Database
 */migrations/*
@@ -26,14 +27,16 @@ out
 .vercel
 
 # Lavalink
-Lavalink.jar
+Lavalink*.jar
 application.yml
 application.yaml
+/plugins
+/plugins/youtube-plugin*
 
 # Typescript
 *.tsbuildinfo
 
-# Dev utils and Dependencies 
+# Dev utils and Dependencies
 node_modules
 *.vscode
 .DS_Store
@@ -52,6 +55,6 @@ db.sqlite-journal
 */.pnp
 .pnp.js
 logs
-config.json 
+config.json
 test.js
 json.sqlite

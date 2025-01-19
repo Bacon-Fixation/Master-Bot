@@ -121,7 +121,7 @@ export class HelpCommand extends Command {
 
 				const commandDetails = new EmbedBuilder()
 					.setAuthor({
-						name: interaction.user.username + ' - Help Command',
+						name: interaction.user.displayName + ' - Help Command',
 						iconURL: interaction.user.displayAvatarURL()
 					})
 					.setThumbnail(app?.iconURL()!)

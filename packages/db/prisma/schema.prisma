@@ -71,7 +71,6 @@ model Song {
     isSeekable Boolean
     sourceName String
     thumbnail  String
-    added      Int
     playlistId Int
     playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
 }
@@ -81,7 +80,7 @@ model Playlist {
     createdAt DateTime @default(now())
     name      String
     userId    String?
-    user      User?    @relation(fields: [userId], references: [id])
+    user      User?    @relation(fields: [userId], references: [discordId])
     songs     Song[]
 }
 

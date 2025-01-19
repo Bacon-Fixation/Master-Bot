@@ -5,6 +5,7 @@ import * as MetadataFilter from 'metadata-filter';
 export class Song implements TrackInfo {
 	readonly track: string;
 	requester?: RequesterInfo;
+	added?: number;
 	length: number;
 	identifier: string;
 	author: string;
@@ -15,12 +16,11 @@ export class Song implements TrackInfo {
 	isSeekable: boolean;
 	sourceName: string;
 	thumbnail: string;
-	added: number;
 
 	constructor(
 		track: string | Track,
-		added?: number,
-		requester?: RequesterInfo
+		requester?: RequesterInfo,
+		added?: number
 	) {
 		this.track = typeof track === 'string' ? track : track.track;
 		this.requester = requester;
@@ -93,5 +93,5 @@ interface RequesterInfo {
 	avatar?: string | null;
 	defaultAvatarURL?: string;
 	id?: string;
-	name?: string;
+	displayName?: string;
 }

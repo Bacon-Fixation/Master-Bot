@@ -5,14 +5,10 @@ import {
 	ApplicationCommandRegistries,
 	RegisterBehavior
 } from '@sapphire/framework';
-import { ActivityType } from 'discord.js';
 import Logger from './lib/logger';
 import { notify } from './lib/twitch/notifyChannels';
 import { trpcNode } from './trpc';
-
-ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
-	RegisterBehavior.Overwrite
-);
+import buttonsCollector from './lib/music/buttonsCollector';
 
 if (env.SPOTIFY_CLIENT_ID && env.SPOTIFY_CLIENT_SECRET) {
 	load({
@@ -25,14 +21,63 @@ if (env.SPOTIFY_CLIENT_ID && env.SPOTIFY_CLIENT_SECRET) {
 }
 
 const client = new ExtendedClient();
-
 client.on('ready', async () => {
+	// client.rest
+	// 	.put(Routes.applicationCommands(env.DISCORD_CLIENT_ID), { body: [] })
+	// 	.then(() => console.log('Successfully deleted all application commands.'))
+	// 	.catch(console.error);
+	ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
+		RegisterBehavior.Overwrite
+	);
+
 	client.music.connect(client.user!.id);
-	client.user?.setActivity('/', {
-		type: ActivityType.Watching
-	});
 
 	client.user?.setStatus('online');
+	client.guilds.cache.map(async guild => {
+		const queue = client.music.queues.get(guild.id);
+
+		// grab last known voice state of bot
+		const voiceState = await guild.voiceStates.cache.find(
+			user => user.id == client.application?.id
+		);
+
+		// update lavalink manually if the bot is still in voice chat after restart
+		const customVoiceStateUpdate = {
+			session_id: voiceState?.sessionId,
+			channel_id: voiceState?.channel?.id,
+			guild_id: voiceState?.guild.id,
+			user_id: guild.members.me?.id
+		};
+		if (queue) {
+			if (guild.members.me?.voice) {
+				if (!customVoiceStateUpdate.channel_id) return;
+				queue.createPlayer();
+				queue.connect(customVoiceStateUpdate.channel_id);
+				await queue.start();
+
+				const song = await queue.getCurrentTrack();
+				if (song) {
+					const channel = guild.channels.cache.get(
+						(await queue.getTextChannelID()) as string
+					);
+					// remake the message collector so buttons will work again after restart
+					if (channel?.isTextBased()) {
+						const message = await channel.messages.fetch(
+							(await queue.getEmbed()) as string
+						);
+
+						if (queue.player) {
+							try {
+								await buttonsCollector(message, song);
+							} catch (e) {
+								console.log(e);
+							}
+						}
+					}
+				}
+			}
+		}
+	});
 	const token = client.twitch.auth.access_token;
 	if (!token) return;
 
@@ -61,6 +106,28 @@ client.on('ready', async () => {
 				await notify(newQuery);
 			}, 60 * 1000)
 		);
+		const getStatusCache = async () => {
+			const response = [
+				{ name: 'Beta Music Features', type: 4 },
+				{ name: 'YouTube - Online', type: 4 },
+				{ name: 'SoundCloud - Online', type: 4 },
+				{ name: 'Vimeo - Online', type: 4 },
+				{ name: 'Twitch - Audio Only', type: 4 },
+				{ name: 'Spotify - Limited', type: 4 }
+			];
+
+			return response;
+		};
+		const startStatusRotation = async () => {
+			let index = 0;
+			setInterval(async () => {
+				let statusArray = await getStatusCache();
+
+				client.user?.setPresence({ activities: [statusArray[index]] });
+				index = (index + 1) % statusArray.length;
+			}, 5000);
+		};
+		startStatusRotation();
 	} catch (err) {
 		Logger.error('Prisma ' + err);
 	}

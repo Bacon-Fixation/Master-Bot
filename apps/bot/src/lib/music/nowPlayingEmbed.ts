@@ -48,7 +48,7 @@ export class NowPlayingEmbed {
 		let embedColor: ColorResolvable;
 		let sourceTxt: string;
 		let sourceIcon: string;
-		let streamData;
+		let streamData: any;
 
 		switch (this.track.sourceName) {
 			case 'soundcloud': {
@@ -144,7 +144,7 @@ export class NowPlayingEmbed {
 			.addFields(embedFieldData)
 			.setTimestamp(this.track.added ?? Date.now())
 			.setFooter({
-				text: `Requested By ${this.track.requester?.name}`,
+				text: `Requested By ${this.track.requester?.displayName}`,
 				iconURL: userAvatar
 			});
 
@@ -195,8 +195,8 @@ export class NowPlayingEmbed {
 			timeObject.seconds < 10
 				? '0' + timeObject.seconds
 				: timeObject.seconds
-				? timeObject.seconds
-				: '00'
+				  ? timeObject.seconds
+				  : '00'
 		}`;
 	}
 

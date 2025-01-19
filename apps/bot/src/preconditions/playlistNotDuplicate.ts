@@ -4,7 +4,7 @@ import {
 	Precondition,
 	PreconditionOptions
 } from '@sapphire/framework';
-import type { ChatInputCommandInteraction, GuildMember } from 'discord.js';
+import type { ChatInputCommandInteraction, User } from 'discord.js';
 import { trpcNode } from '../trpc';
 
 @ApplyOptions<PreconditionOptions>({
@@ -16,16 +16,17 @@ export class PlaylistNotDuplicate extends Precondition {
 	): AsyncPreconditionResult {
 		const playlistName = interaction.options.getString('playlist-name', true);
 
-		const guildMember = interaction.member as GuildMember;
+		const guildMember = interaction.user as User;
 
 		try {
 			const playlist = await trpcNode.playlist.getPlaylist.query({
 				name: playlistName,
 				userId: guildMember.id
 			});
-
-			if (playlist) throw new Error();
-		} catch {
+			console.error(playlist);
+			if (playlist.playlist) throw new Error();
+		} catch (error) {
+			console.error(error);
 			return this.error({
 				message: `There is already a playlist named **${playlistName}** in your saved playlists!`
 			});

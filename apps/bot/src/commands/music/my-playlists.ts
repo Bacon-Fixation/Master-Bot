@@ -27,36 +27,39 @@ export class MyPlaylistsCommand extends Command {
 	public override async chatInputRun(
 		interaction: Command.ChatInputCommandInteraction
 	) {
-		const interactionMember = interaction.member?.user;
+		const interactionUser = interaction.user;
 
-		if (!interactionMember) {
+		if (!interactionUser) {
 			return await interaction.reply({
 				content: ':x: Something went wrong! Please try again later'
 			});
 		}
 
 		const baseEmbed = new EmbedBuilder().setColor('Purple').setAuthor({
-			name: `${interactionMember.username}`,
-			iconURL: interactionMember.avatar || undefined
+			name: `${interactionUser.displayName}`,
+			iconURL:
+				interactionUser.displayAvatarURL() || interactionUser.defaultAvatarURL
 		});
 
 		const playlistsQuery = await trpcNode.playlist.getAll.query({
-			userId: interactionMember.id
+			userId: interactionUser.id
 		});
 
 		if (!playlistsQuery || !playlistsQuery.playlists.length) {
 			return await interaction.reply(':x: You have no custom playlists');
 		}
 
-		new PaginatedFieldMessageEmbed()
+		const emdeds = new PaginatedFieldMessageEmbed()
 			.setTitleField('Custom Playlists')
 			.setTemplate(baseEmbed)
 			.setItems(playlistsQuery.playlists)
 			.formatItems((playlist: any) => playlist.name)
 			.setItemsPerPage(5)
-			.make()
-			.run(interaction);
+			.make();
 
-		return;
+		const response = emdeds;
+		console.log(response);
+		//@ts-ignore
+		return; // interaction.reply({ embeds: response[0][0] });
 	}
 }

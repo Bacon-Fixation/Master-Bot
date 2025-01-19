@@ -7,10 +7,12 @@ export async function manageStageChannel(
 	botUser: GuildMember,
 	instance: Queue
 ) {
-	if (voiceChannel.type !== ChannelType.GuildStageVoice) return;
+	if (voiceChannel?.type !== ChannelType.GuildStageVoice) return;
 	// Stage Channel Permissions From Discord.js Doc's
+
 	if (
 		!botUser?.permissions.has(
+			// @ts-ignore
 			('ManageChannels' && 'MuteMembers' && 'MoveMembers') || 'ADMINISTRATOR'
 		)
 	)

@@ -46,9 +46,9 @@ export class RemoveFromPlaylistCommand extends Command {
 		const playlistName = interaction.options.getString('playlist-name', true);
 		const location = interaction.options.getInteger('location', true);
 
-		const interactionMember = interaction.member?.user;
+		const interactionUser = interaction.user;
 
-		if (!interactionMember) {
+		if (!interactionUser) {
 			return await interaction.followUp(
 				':x: Something went wrong! Please try again later'
 			);
@@ -57,18 +57,17 @@ export class RemoveFromPlaylistCommand extends Command {
 		let playlist;
 		try {
 			const playlistQuery = await trpcNode.playlist.getPlaylist.query({
-				name: playlistName,
-				userId: interactionMember.id
+				userId: interactionUser.id,
+				name: playlistName
 			});
-
 			playlist = playlistQuery.playlist;
 		} catch (error) {
 			return await interaction.followUp(':x: Something went wrong!');
 		}
-
+		console.log(playlist);
 		const songs = playlist?.songs;
 
-		if (!songs?.length) {
+		if (!songs) {
 			return await interaction.followUp(`:x: **${playlistName}** is empty!`);
 		}
 

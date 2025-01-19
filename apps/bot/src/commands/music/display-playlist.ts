@@ -38,9 +38,9 @@ export class DisplayPlaylistCommand extends Command {
 	) {
 		const playlistName = interaction.options.getString('playlist-name', true);
 
-		const interactionMember = interaction.member?.user;
+		const interactionUser = interaction.user;
 
-		if (!interactionMember) {
+		if (!interactionUser) {
 			return await interaction.reply({
 				content: ':x: Something went wrong! Please try again later'
 			});
@@ -48,7 +48,7 @@ export class DisplayPlaylistCommand extends Command {
 
 		const playlistQuery = await trpcNode.playlist.getPlaylist.query({
 			name: playlistName,
-			userId: interactionMember.id
+			userId: interactionUser.id
 		});
 
 		const { playlist } = playlistQuery;
@@ -60,8 +60,9 @@ export class DisplayPlaylistCommand extends Command {
 		}
 
 		const baseEmbed = new EmbedBuilder().setColor('Purple').setAuthor({
-			name: interactionMember.username,
-			iconURL: interactionMember.avatar || undefined
+			name: interactionUser.displayName,
+			iconURL:
+				interactionUser.displayAvatarURL() || interactionUser.defaultAvatarURL
 		});
 
 		new PaginatedFieldMessageEmbed()

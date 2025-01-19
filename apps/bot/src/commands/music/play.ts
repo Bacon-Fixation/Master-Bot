@@ -78,9 +78,9 @@ export class PlayCommand extends Command {
 
 		const shufflePlaylist = interaction.options.getString('shuffle-playlist');
 
-		const interactionMember = interaction.member?.user;
+		const interactionUser = interaction.user;
 
-		if (!interactionMember) {
+		if (!interactionUser) {
 			return await interaction.followUp(
 				':x: Something went wrong! Please try again later'
 			);
@@ -110,7 +110,7 @@ export class PlayCommand extends Command {
 
 		if (isCustomPlaylist == 'Yes') {
 			const data = await trpcNode.playlist.getPlaylist.query({
-				userId: interactionMember.id,
+				userId: interactionUser.id,
 				name: query
 			});
 
@@ -124,10 +124,22 @@ export class PlayCommand extends Command {
 			}
 
 			const { songs } = playlist;
-			tracks.push(...songs);
-			message = `Added songs from **${playlist}** to the queue!`;
+			const requester = {
+				avatar: interactionUser.avatar,
+				defaultAvatarURL: interactionUser.defaultAvatarURL,
+				id: interactionUser.id,
+				displayName: interactionUser.displayName
+			};
+			const songsWithRequester = songs.map(song => ({
+				...song,
+				requester
+			}));
+			// @ts-ignore
+			tracks.push(...songsWithRequester);
+
+			message = `Added songs from **${playlist.name}** to the queue!`;
 		} else {
-			const trackTuple = await searchSong(query, interaction.user);
+			const trackTuple = await searchSong(query, interactionUser);
 			if (!trackTuple[1].length) {
 				return await interaction.followUp({ content: trackTuple[0] as string }); // error
 			}
@@ -139,7 +151,6 @@ export class PlayCommand extends Command {
 		if (shufflePlaylist == 'Yes') {
 			await queue.shuffleTracks();
 		}
-
 		const current = await queue.getCurrentTrack();
 		if (current) {
 			client.emit(
@@ -147,7 +158,7 @@ export class PlayCommand extends Command {
 				interaction.channel,
 				await queue.getCurrentTrack()
 			);
-			return;
+			return interaction.followUp({ content: message });
 		}
 
 		queue.start();

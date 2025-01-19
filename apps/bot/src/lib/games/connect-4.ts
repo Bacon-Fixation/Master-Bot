@@ -320,9 +320,8 @@ export class Connect4Game {
 						]
 					})
 					.then(async (result: Message) => {
-						boardImageURL = await result.attachments.entries().next().value[1]
-							.url;
-
+						// @ts-ignore
+						boardImageURL = result.attachments.entries().next().value[1].url;
 						result.delete();
 					})
 					.catch((error: string) => {

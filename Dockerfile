@@ -1,12 +1,12 @@
-FROM --platform=linux/amd64 node:18-slim
+FROM --platform=linux/amd64 node:22
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV NEXT_TELEMETRY_DISABLED 1
 WORKDIR "/Master-Bot"
 
 # Ports for the Dashboard  
-EXPOSE 3000
-ENV PORT 3000
+EXPOSE 3003
+ENV PORT 3003
 
 # Install prerequisites and register fonts
 RUN apt-get update && apt-get upgrade -y -q && \

@@ -31,8 +31,9 @@ export class QueueCommand extends Command {
 		const { client } = container;
 		const queue = client.music.queues.get(interaction.guildId!);
 		const baseEmbed = new EmbedBuilder().setColor('Red').setAuthor({
-			name: `${interaction.user.username}`,
-			iconURL: interaction.user.displayAvatarURL()
+			name: `${interaction.user.displayName}`,
+			iconURL:
+				interaction.user.displayAvatarURL() || interaction.user.defaultAvatarURL
 		});
 		let index = 1;
 		new PaginatedFieldMessageEmbed()
